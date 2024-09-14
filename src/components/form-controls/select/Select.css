@@ -1,0 +1,9 @@
+.MuiAutocomplete-root.custom-select .MuiFormControl-root .MuiInputBase-root{
+    padding: 7px;
+}
+.MuiAutocomplete-root.custom-select .MuiFormControl-root .MuiInputBase-root .MuiInputBase-input{
+font-size: 13px;
+}
+.MuiAutocomplete-root.custom-select .MuiFormLabel-root{
+    font-size: 13px;
+}

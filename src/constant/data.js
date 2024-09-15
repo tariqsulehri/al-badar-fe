@@ -1,3 +1,55 @@
+
+
+
+export const lights =[{
+  value: "Available",
+  label: "Available",
+},
+{
+  value: "Not Available",
+  label: "Not Available",
+}];
+
+export const category =[
+
+  {
+    value: "A+",
+    label: "A+",
+  },
+  {
+    value: "A",
+    label: "A",
+  },
+  {
+    value: "B+",
+    label: "B+",
+  },
+  {
+    value: "B",
+    label: "B",
+  },
+  {
+    value: "C+",
+    label: "C+",
+  },
+  {
+    value: "C",
+    label: "C",
+  },
+  {
+    value: "D+",
+    label: "D+",
+  },
+  {
+    value: "D",
+    label: "D",
+  }
+
+]
+
+
+
+
 export const areas = [
     {
       value: "DHA",

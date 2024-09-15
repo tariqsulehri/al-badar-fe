@@ -25,7 +25,7 @@ export const getAllSubArea = async (rowsPerPage, pageNo, searchBy, searchText) =
 
 export const findSubAreaById = async (id) => {
     try{
-        const resp = await httpClient.get(`http://localhost:3500/api/subarea/find/${id}`);
+        const resp = await httpClient.get(`/subarea/find/${id}`);
         return resp?.data;
     } catch(error){ 
       console.log("Something Went wrong", "Something Went wrong");

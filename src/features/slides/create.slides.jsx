@@ -6,6 +6,8 @@ import { getAllProvencsForSelection } from "../../services/apis/config/provServi
 import { getAllCitiesForSelection } from "../../services/apis/config/cityService";
 import { getAllAreasForSelection } from "../../services/apis/config/areaService";
 import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
+import { suppliers, lights, category } from "../../constant/data";
+
 
 import axios from "axios";
 import { createSlide, findSlideById } from "../../services/apis/slideService";
@@ -182,8 +184,9 @@ const CreateSlide = function () {
     }
   };
 
-  const handleSupplierChange = async (event, values) => {
-    setFormData({ ...formData, supplier: values.label });
+  const handleSupplierChange = async (event, values, controlName) => {
+    setFormData({ ...formData, [`${controlName}`]: values.label });
+    console.log(formData);
   };
 
   const handleProvenceChange = async (event, values) => {
@@ -194,6 +197,7 @@ const CreateSlide = function () {
     setFormData({ ...formData, city: values.label });
   };
 
+
   const handleAreaChange = async (event, values) => {
     setFormData({ ...formData, area: values.label });
   };
@@ -201,6 +205,15 @@ const CreateSlide = function () {
   const handleSubAreaChange = async (event, values) => {
     setFormData({ ...formData, subArea: values.label });
   };
+
+  const handleLightsChange = async (event, values) => {
+    setFormData({ ...formData, lights: values.label });
+  };
+
+  const handleCategoryChange = async (event, values) => {
+    setFormData({ ...formData, category: values.label });
+  };
+
 
   return (
     <>
@@ -217,10 +230,13 @@ const CreateSlide = function () {
       >
         <SlideDetail
           formData={formData}
+          suppliers={suppliers}
           provences={provences}
           cities={cities}
           areas={areas}
           subAreas={subAreas}
+          lights={lights}
+          category={category}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           handleSupplierChange={handleSupplierChange}
@@ -228,6 +244,8 @@ const CreateSlide = function () {
           handleCityChange={handleCityChange}
           handleAreaChange={handleAreaChange}
           handleSubAreaChange={handleSubAreaChange}
+          handleLightsChange={handleLightsChange}
+          handleCategoryChange={handleCategoryChange}
         />
         <ImageCard previewImage={previewImage} handleImageUpload={handleImageUpload} />
       </div>

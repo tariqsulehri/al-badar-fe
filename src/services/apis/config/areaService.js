@@ -26,7 +26,7 @@ export const getAllArea = async (rowsPerPage, pageNo, searchBy, searchText) => {
 
 export const findAreaById = async (id) => {
     try{
-        const resp = await httpClient.get(`http://localhost:3500/api/area/find/${id}`);
+        const resp = await httpClient.get(`/area/find/${id}`);
         return resp?.data;
     } catch(error){ 
       console.log("Something Went wrong", "Something Went wrong");

@@ -5,73 +5,77 @@ import Select from "../../../../components/form-controls/select/Select";
 import InputField from "../../../../components/form-controls/input/textfield";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
 import DigitalSlide from "../../../../features/slides/degital.slide.component";
-import { suppliers } from "../../../../constant/data";
-// import { suppliers} from "../../../../constant/data";
-
+// import { suppliers, lights, category } from "../../../../constant/data";
 
 const SlideDetail = function ({
   formData,
-  handleChange,
-  handleSubmit,
+  suppliers,
   provences,
   cities,
   areas,
   subAreas,
+  lights,
+  category,
+  handleChange,
+  handleSubmit,
   handleSupplierChange,
   handleProvenceChange,
   handleCityChange,
   handleAreaChange,
   handleSubAreaChange,
+  handleLightsChange,
+  handleCategoryChange
+
 }) {
   useEffect(() => {
     // console.log("FormData Updated chiled", formData);
   }, [formData]);
 
-  const [lights, setLights] = useState([
-    {
-      value: "Available",
-      label: "Available",
-    },
-    {
-      value: "Not Available",
-      label: "Not Available",
-    },
-  ]);
+  // const [lights, setLights] = useState([
+  //   {
+  //     value: "Available",
+  //     label: "Available",
+  //   },
+  //   {
+  //     value: "Not Available",
+  //     label: "Not Available",
+  //   },
+  // ]);
 
-  const [category, setCategory] = useState([
-    {
-      value: "A+",
-      label: "A+",
-    },
-    {
-      value: "A",
-      label: "A",
-    },
-    {
-      value: "B+",
-      label: "B+",
-    },
-    {
-      value: "B",
-      label: "B",
-    },
-    {
-      value: "C+",
-      label: "C+",
-    },
-    {
-      value: "C",
-      label: "C",
-    },
-    {
-      value: "D+",
-      label: "D+",
-    },
-    {
-      value: "D",
-      label: "D",
-    },
-  ]);
+  // const [category, setCategory] = useState([
+  //   {
+  //     value: "A+",
+  //     label: "A+",
+  //   },
+  //   {
+  //     value: "A",
+  //     label: "A",
+  //   },
+  //   {
+  //     value: "B+",
+  //     label: "B+",
+  //   },
+  //   {
+  //     value: "B",
+  //     label: "B",
+  //   },
+  //   {
+  //     value: "C+",
+  //     label: "C+",
+  //   },
+  //   {
+  //     value: "C",
+  //     label: "C",
+  //   },
+  //   {
+  //     value: "D+",
+  //     label: "D+",
+  //   },
+  //   {
+  //     value: "D",
+  //     label: "D",
+  //   },
+  // ]);
 
   if(!provences && !cities && !areas || !subAreas) {
       return(
@@ -106,10 +110,9 @@ const SlideDetail = function ({
                 name="supplier"
                 value={formData.supplier}
                 defaultValue={formData.supplier}
-                // onChange={(event, values) => {
-                //   setFormData({ ...formData, supplier: values.label });
-                // }}
-                onChange={handleSupplierChange}
+                onChange={(event, values) => {
+                  handleSupplierChange(event, values, "supplier") 
+                }}
                 options={suppliers}
                 label={"Supplier"}
                 width={"100%"}
@@ -119,12 +122,6 @@ const SlideDetail = function ({
               <Select
                 name="province"
                 value={formData.province}
-                // onChange={(event, values) => {
-                //   setFormData({ ...formData, provence: values.label });
-                // }}
-                // onChange={(event, values) => {
-                //   onProvenceChangeEvent(event, values);
-                // }}
                 onChange={handleProvenceChange}
                 options={provences}
                 label={"Province "}
@@ -148,7 +145,7 @@ const SlideDetail = function ({
                 name="area"
                 value={formData.area}
                 defaultValue={formData.area}
-                handleAreaChange={handleAreaChange}
+                onChange={handleAreaChange}
                 options={areas}
                 label={"Area "}
                 width={"100%"}
@@ -159,7 +156,7 @@ const SlideDetail = function ({
                 name="subArea"
                 value={formData.subArea}
                 defaultValue={formData.subArea}
-                handleSubAreaChange ={handleSubAreaChange}
+                onChange ={handleSubAreaChange}
                 options={subAreas}
                 label={"Sub Area "}
                 width={"100%"}
@@ -216,9 +213,7 @@ const SlideDetail = function ({
               <Select
                 name="category"
                 value={formData.category}
-                onChange={(event, values) => {
-                  setFormData({ ...formData, category: values.label });
-                }}
+                onChange={handleCategoryChange}
                 options={category}
                 label={"Category "}
                 width={"100%"}
@@ -276,9 +271,7 @@ const SlideDetail = function ({
               <Select
                 name="lights"
                 value={formData.lights}
-                onChange={(event, values) => {
-                  setFormData({ ...formData, lights: values.label });
-                }}
+                onChange={handleLightsChange}
                 options={lights}
                 label={"Lights "}
                 width={"100%"}

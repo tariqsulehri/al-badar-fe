@@ -16,6 +16,9 @@ const SlideDetail = function ({
   subAreas,
   lights,
   category,
+  mediaTypes,
+  dimension,
+  status,
   handleChange,
   handleSubmit,
   handleSupplierChange,
@@ -24,59 +27,15 @@ const SlideDetail = function ({
   handleAreaChange,
   handleSubAreaChange,
   handleLightsChange,
-  handleCategoryChange
+  handleCategoryChange,
+  handleChangeSelect
 
 }) {
   useEffect(() => {
     // console.log("FormData Updated chiled", formData);
   }, [formData]);
 
-  // const [lights, setLights] = useState([
-  //   {
-  //     value: "Available",
-  //     label: "Available",
-  //   },
-  //   {
-  //     value: "Not Available",
-  //     label: "Not Available",
-  //   },
-  // ]);
-
-  // const [category, setCategory] = useState([
-  //   {
-  //     value: "A+",
-  //     label: "A+",
-  //   },
-  //   {
-  //     value: "A",
-  //     label: "A",
-  //   },
-  //   {
-  //     value: "B+",
-  //     label: "B+",
-  //   },
-  //   {
-  //     value: "B",
-  //     label: "B",
-  //   },
-  //   {
-  //     value: "C+",
-  //     label: "C+",
-  //   },
-  //   {
-  //     value: "C",
-  //     label: "C",
-  //   },
-  //   {
-  //     value: "D+",
-  //     label: "D+",
-  //   },
-  //   {
-  //     value: "D",
-  //     label: "D",
-  //   },
-  // ]);
-
+  
   if(!provences && !cities && !areas || !subAreas) {
       return(
         <>
@@ -111,7 +70,7 @@ const SlideDetail = function ({
                 value={formData.supplier}
                 defaultValue={formData.supplier}
                 onChange={(event, values) => {
-                  handleSupplierChange(event, values, "supplier") 
+                  handleChangeSelect(event, values, "supplier") 
                 }}
                 options={suppliers}
                 label={"Supplier"}
@@ -122,7 +81,9 @@ const SlideDetail = function ({
               <Select
                 name="province"
                 value={formData.province}
-                onChange={handleProvenceChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "province") 
+                }}
                 options={provences}
                 label={"Province "}
                 width={"100%"}
@@ -133,7 +94,9 @@ const SlideDetail = function ({
                 name="city"
                 value={formData.city}
                 defaultValue={formData.city}
-                onChange={handleCityChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "city") 
+                }}
                 options={cities}
                 label={"City "}
                 width={"100%"}
@@ -145,7 +108,9 @@ const SlideDetail = function ({
                 name="area"
                 value={formData.area}
                 defaultValue={formData.area}
-                onChange={handleAreaChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "area") 
+                }}
                 options={areas}
                 label={"Area "}
                 width={"100%"}
@@ -156,7 +121,9 @@ const SlideDetail = function ({
                 name="subArea"
                 value={formData.subArea}
                 defaultValue={formData.subArea}
-                onChange ={handleSubAreaChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "subArea") 
+                }}
                 options={subAreas}
                 label={"Sub Area "}
                 width={"100%"}
@@ -193,18 +160,9 @@ const SlideDetail = function ({
                 name="mediaType"
                 value={formData.mediaType}
                 onChange={(event, values) => {
-                  setFormData({ ...formData, mediaType: values.label });
+                  handleChangeSelect(event, values, "mediaType") 
                 }}
-                options={[
-                  {
-                    value: "Static",
-                    label: "Static",
-                  },
-                  {
-                    value: "Digital",
-                    label: "Digital",
-                  },
-                ]}
+                options={mediaTypes}
                 label={"Media Type "}
                 width={"100%"}
               />
@@ -213,7 +171,9 @@ const SlideDetail = function ({
               <Select
                 name="category"
                 value={formData.category}
-                onChange={handleCategoryChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "category") 
+                }}
                 options={category}
                 label={"Category "}
                 width={"100%"}
@@ -251,18 +211,9 @@ const SlideDetail = function ({
                 name="dimension"
                 value={formData.dimension}
                 onChange={(event, values) => {
-                  setFormData({ ...formData, dimension: values.label });
+                  handleChangeSelect(event, values, "dimension") 
                 }}
-                options={[
-                  {
-                    value: "Vertical",
-                    label: "Vertical",
-                  },
-                  {
-                    value: "Horizontal",
-                    label: "Horizontal",
-                  },
-                ]}
+                options={dimension}
                 label={"Dimension "}
                 width={"100%"}
               />
@@ -271,7 +222,9 @@ const SlideDetail = function ({
               <Select
                 name="lights"
                 value={formData.lights}
-                onChange={handleLightsChange}
+                onChange={(event, values) => {
+                  handleChangeSelect(event, values, "lights") 
+                }}
                 options={lights}
                 label={"Lights "}
                 width={"100%"}
@@ -282,18 +235,9 @@ const SlideDetail = function ({
                 name="status"
                 value={formData.status}
                 onChange={(event, values) => {
-                  setFormData({ ...formData, status: values.label });
+                  handleChangeSelect(event, values, "status") 
                 }}
-                options={[
-                  {
-                    value: "Available",
-                    label: "Available",
-                  },
-                  {
-                    value: "Not Available",
-                    label: "Not Available",
-                  },
-                ]}
+                options={status}
                 label={"Status "}
                 width={"100%"}
               />

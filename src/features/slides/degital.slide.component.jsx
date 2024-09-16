@@ -43,7 +43,7 @@ function DigitalSlide({ formData, handleChange }) {
         />
         </Grid>
 
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <InputField
           id="no_of_steamers"
           name="no_of_steamers"
@@ -55,7 +55,7 @@ function DigitalSlide({ formData, handleChange }) {
           onChange={(e) => handleChange(e)}
         />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
         <InputField
           id="working_hrs_day"
           name="working_hrs_day"
@@ -67,7 +67,7 @@ function DigitalSlide({ formData, handleChange }) {
           onChange={(e) => handleChange(e)}
         />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
         <InputField
           id="ad_duration"
           name="ad_duration"
@@ -79,7 +79,7 @@ function DigitalSlide({ formData, handleChange }) {
           onChange={(e) => handleChange(e)}
         />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
         <InputField
           id="no_of_spots"
           name="no_of_spots"
@@ -87,6 +87,18 @@ function DigitalSlide({ formData, handleChange }) {
           placeholder="No of Spots"
           required={true}
           label="No of Spots"
+          width={"100%"}
+          onChange={(e) => handleChange(e)}
+        />
+        </Grid>
+        <Grid item xs={4}>
+        <InputField
+          id="rate_per_week"
+          name="rate_per_week"
+          defaultValue={formData.rate_per_week}
+          placeholder="Rate per week"
+          required={true}
+          label="Rate per week"
           width={"100%"}
           onChange={(e) => handleChange(e)}
         />

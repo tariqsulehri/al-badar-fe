@@ -6,7 +6,7 @@ import { getAllProvencsForSelection } from "../../services/apis/config/provServi
 import { getAllCitiesForSelection } from "../../services/apis/config/cityService";
 import { getAllAreasForSelection } from "../../services/apis/config/areaService";
 import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
-import { suppliers, lights, category } from "../../constant/data";
+import { suppliers, lights, category, mediaTypes, dimension, status } from "../../constant/data";
 
 
 import axios from "axios";
@@ -16,7 +16,7 @@ const CreateSlide = function () {
   let id = useSelector((state) => state.slide.slideId || null);
   id = id?.payload;
 
-  let [previewImage, setPreviewImage] = useState([]);
+  let [previewImage, setPreviewImage] = useState("");
   let [provences, setProvences] = useState([]);
   let [cities, setCities] = useState([]);
   let [areas, setAreas] = useState([]);
@@ -39,7 +39,7 @@ const CreateSlide = function () {
     working_hrs_day: "",
     ad_duration: "",
     no_of_spots: "",
-    rate_per_week: "",
+    rate_per_week: "0",
     trafic_facing_coming: "",
     facing_trafic_going: "",
     category: "",
@@ -172,17 +172,24 @@ const CreateSlide = function () {
       const fileFormData = new FormData();
       fileFormData.append("image", e.target.files[0]);
 
-      const result = await axios.post("http://localhost:3500/api/slides/upload", fileFormData, {
+      const result = await axios.post("http://localhost:3500/api/slide/upload", fileFormData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (result.data) {
-        setPreviewImage(result.data.file);
+        setFormData({ ...formData, image: result.data.file });
       }
     } catch (error) {
       console.log(error.message);
     }
   };
+
+
+  const handleChangeSelect = async (event, values, controlName) => {
+    setFormData({ ...formData, [`${controlName}`]: values.label });
+    console.log(controlName);
+  };
+
 
   const handleSupplierChange = async (event, values, controlName) => {
     setFormData({ ...formData, [`${controlName}`]: values.label });
@@ -237,6 +244,9 @@ const CreateSlide = function () {
           subAreas={subAreas}
           lights={lights}
           category={category}
+          mediaTypes={mediaTypes}
+          dimension={dimension}
+          status={status}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           handleSupplierChange={handleSupplierChange}
@@ -246,8 +256,9 @@ const CreateSlide = function () {
           handleSubAreaChange={handleSubAreaChange}
           handleLightsChange={handleLightsChange}
           handleCategoryChange={handleCategoryChange}
+          handleChangeSelect={handleChangeSelect}
         />
-        <ImageCard previewImage={previewImage} handleImageUpload={handleImageUpload} />
+        <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />
       </div>
     </>
   );

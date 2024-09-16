@@ -4,7 +4,7 @@ import {showToastNotification} from "../../helpers/notificationsHepler"
 
 export const getAllSlides = async (rowsPerPage, pageNo, searchBy, searchText) => {
     try{
-        let {data} = await httpClient.get(`/slides/list?pageSize=${rowsPerPage}&pageNo=${pageNo}&searchBy=${searchBy}&searchText=${searchText}`);
+        let {data} = await httpClient.get(`/slide/list?pageSize=${rowsPerPage}&pageNo=${pageNo}&searchBy=${searchBy}&searchText=${searchText}`);
         return data ? data : { data:null, totalRecords: 0 };
     } catch(error) {
         showToastNotification("error", "Something Went wrong..");
@@ -14,7 +14,7 @@ export const getAllSlides = async (rowsPerPage, pageNo, searchBy, searchText) =>
 
 export const findSlideById = async (id) => {
     try{
-        const resp = await httpClient.get(`http://localhost:3500/api/slides/find/${id}`);
+        const resp = await httpClient.get(`http://localhost:3500/api/slide/find/${id}`);
         return resp?.data;
     } catch(error){ 
       console.log("Something Went wrong", "Something Went wrong");

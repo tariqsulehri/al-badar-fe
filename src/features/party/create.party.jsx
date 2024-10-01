@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import PartyDetail from "./components/partyDetail.component";
+import { getAllProvencsForSelection } from "../../services/apis/config/provService";
+import { getAllCitiesForSelection } from "../../services/apis/config/cityService";
+import { partyTypes } from "../../constant/data";
+
 import axios from "axios";
-import Select from "../../components/form-controls/select/Select";
-import InputField from "../../components/form-controls/input/textfield";
-import CustomButton from "../../components/form-controls/buttons/customButton";
-import { provinces, cities, areas, subAreas, suppliers } from "../../constant/data";
-import { Card, CardContent, CardActions, Typography, Grid } from "@mui/material";
+import { createParty, findPartyById, updateParty } from "../../services/apis/partyService";
 
 const CreateParty = () => {
-  const [formData, setFormData] = useState({
-    type: "",
+  let id = useSelector((state) => state.party.partyId|| null);
+ 
+  id = id?.payload;
+
+  const emptyObject = {
+    partyType: "",
     name: "",
     provence: "",
     city: "",
@@ -20,22 +26,111 @@ const CreateParty = () => {
     contactPerson: "",
     contactPersonEmail: "",
     address: "",
-    NTN: "",
-    GST: "",
+    ntn: "",
+    gst: "",
+    accountNumber: "",
     bankName: "",
     gl_code: "",
     remarks_internal: "",
-    is_active: false,
+    is_active: true,
+  };
+
+  let [provences, setProvences] = useState([]);
+  let [cities, setCities] = useState([]);
+
+  const [formData, setFormData] = useState({
+    partyType: "",
+    name: "",
+    provence: "",
+    city: "",
+    phoneNo: "",
+    cellNo: "",
+    email: "",
+    website: "",
+    fax: "",
+    contactPerson: "",
+    contactPersonEmail: "",
+    address: "",
+    ntn: "",
+    gst: "",
+    accountNumber: "",
+    bankName: "",
+    gl_code: "",
+    remarks_internal: "",
+    is_active: true,
   });
+
+  const getProvences = async () => {
+    try {
+      let resp = await getAllProvencsForSelection();
+      await setProvences(resp);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      let resp = await getAllCitiesForSelection();
+      await setCities(resp);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const fillPartyObject = async (data) => {
+    try {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        ...data, // Overwrite with new data from the API
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      await getProvences();
+      await getCities();
+    };
+    fetchConfig();
+  }, []); // Runs when `id` changes
+
+  useEffect(() => {
+    const fetchParty = async () => {
+      try {
+        if (id) {
+          const resp = await findPartyById(id);
+          await fillPartyObject(resp.result);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
+    fetchParty();
+  }, [id]); // Runs when `id` changes
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    console.log(formData);
   };
 
   const handleSubmit = async () => {
-    console.log(formData);
-    axios.post("http://localhost:3500/api/party/create", formData);
+    if (!id) {
+      createParty(formData);
+    } else {
+      await updateParty(id, formData);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setFormData({ ...formData, ...emptyObject });
+  };
+
+  const handleChangeSelect = async (event, values, controlName) => {
+    setFormData({ ...formData, [`${controlName}`]: values.label });
+    console.log(controlName);
   };
 
   return (
@@ -49,166 +144,16 @@ const CreateParty = () => {
           padding: "0.5em",
         }}
       >
-        <Card style={{ marginRight: "1em" }}>
-          {/* <CardHeader title="Blog Title" subheader="Blog Subtitle" /> */}
-          <CardContent>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <InputField id="name" name="name" defaultValue={formData.name} placeholder="Party name" required={true} label="Party Name" width={"100%"} onChange={(e) => handleChange(e)} />
-              </Grid>
-              <Grid item xs={6}>
-                <Select
-                  name="provence"
-                  value={formData.province}
-                  onChange={(event, values) => {
-                    setFormData({ ...formData, provence: values.label });
-                  }}
-                  options={provinces}
-                  label={"Provence "}
-                  width={"100%"}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Select
-                  name="city"
-                  value={formData.city}
-                  onChange={(event, values) => {
-                    setFormData({ ...formData, city: values.label });
-                  }}
-                  options={cities}
-                  label={"City "}
-                  width={"100%"}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="phoneNo"
-                  name="phoneNo"
-                  defaultValue={formData.phoneNo}
-                  placeholder="Part Contact Number"
-                  required={true}
-                  label="Part Contact number"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="cellNo"
-                  name="cellNo"
-                  defaultValue={formData.cellNo}
-                  placeholder="Party cell number"
-                  required={true}
-                  label="Party cell number"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="email"
-                  name="email"
-                  defaultValue={formData.email}
-                  placeholder="Party email"
-                  required={true}
-                  label="Party email address"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="website"
-                  name="websit"
-                  defaultValue={formData.website}
-                  placeholder="Web Address"
-                  required={true}
-                  label="Party Address"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField id="fax" name="fax" defaultValue={formData.fax} placeholder="Fax Number" required={true} label="Fax Number" width={"100%"} onChange={(e) => handleChange(e)} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="contactPerson"
-                  name="contactPerson"
-                  defaultValue={formData.contactPerson}
-                  placeholder="Contact person"
-                  required={true}
-                  label="Contact Person"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              {formData.mediaType === "Digital" && <DigitalSlide handleChange={handleChange} formData={formData} />}{" "}
-              <Grid item xs={6}>
-                <InputField
-                  id="contactPersonEmail"
-                  name="contactPersonEmail"
-                  defaultValue={formData.contactPersonEmail}
-                  placeholder="Contact person email address"
-                  required={true}
-                  label="Contact Person Email"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-             
-              <Grid item xs={6}>
-                <InputField id="NTN" name="NTN" defaultValue={formData.NTN} placeholder="National tax number" required={true} label="Tax Number" width={"100%"} onChange={(e) => handleChange(e)} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField id="GST" name="GST" defaultValue={formData.GST} placeholder="Sales Tax Number" required={true} label="Sales Tax Number" width={"100%"} onChange={(e) => handleChange(e)} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField id="bankName" name="bankName" defaultValue={formData.bankName} placeholder="Bank Name" required={true} label="Bank Name" width={"100%"} onChange={(e) => handleChange(e)} />
-              </Grid>
-              <Grid item xs={6}>
-                <InputField
-                  id="gl_code"
-                  name="gl_code"
-                  defaultValue={formData.gl_code}
-                  placeholder="Internal Ledger Code"
-                  required={true}
-                  label="GL Code Internal"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputField
-                  id="address"
-                  name="address"
-                  defaultValue={formData.address}
-                  placeholder="Party detailed address"
-                  required={true}
-                  label="Party Address"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputField
-                  id="remarks_internal"
-                  name="remarks_internal"
-                  defaultValue={formData.remarks_internal}
-                  placeholder="Internal Remarks"
-                  required={true}
-                  label="Remarks Internal"
-                  width={"100%"}
-                  onChange={(e) => handleChange(e)}
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-          <CardActions disableSpacing>
-            <CustomButton id="new" name="new" label="Create" />
-            <CustomButton id="save" name="save" label="Save" handleClick={handleSubmit} />
-          </CardActions>
-        </Card>
+       <PartyDetail
+          formData={formData}
+          provences={provences}
+          cities={cities}
+          partyTypes={partyTypes}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          handleRefresh={handleRefresh}
+          handleChangeSelect={handleChangeSelect}
+        />
       </div>
     </>
   );

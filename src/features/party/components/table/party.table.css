@@ -53,3 +53,25 @@
         align-items: center;
         gap: 8px;
     }
+    .table-body-style tr td{
+        padding: 6px 16px;
+    }
+    .page-wrapper{
+        padding: 16px;
+    }
+    .MuiSwitch-root{
+        margin: 0 !important;
+    }
+    .MuiTablePagination-root .MuiToolbar-root .MuiTablePagination-selectLabel, .MuiTablePagination-root .MuiToolbar-root .MuiTablePagination-displayedRows{
+        margin-bottom: 0;
+    }
+    .MuiButtonBase-root.custom-icon-button{
+        border: 1px solid #757575;
+    }
+    .MuiButtonBase-root.custom-icon-button:first-child{
+        margin-right: 8px;
+    }
+
+    .MuiButtonBase-root.custom-icon-button svg{
+        font-size: 16px;
+    }

@@ -38,12 +38,21 @@ const SlideMenu = ({ anchorEl, handleMenuClose }) => {
 
       <MenuItem
         onClick={() => {
-          navigate("/setup/party/create");
+          navigate("/party/create");
           handleMenuClose();
         }}
       >
         Create Party
       </MenuItem>
+      <MenuItem
+        onClick={() => {
+          navigate("/party/list");
+          handleMenuClose();
+        }}
+      >
+        List Party
+      </MenuItem>
+
     </Menu>
   );
 };

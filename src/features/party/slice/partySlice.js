@@ -1,25 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  party: null,
-  id: false,
+  currentSlide: null,
+  slideId: null,
 };
 
 const partySlice = createSlice({
-  name: "party",
+  name: "slide",
   initialState,
   reducers: {
-    setParty: (state,  action) => {
-      const {key, value} = action.payload;
-      state[key]= value
+    setCurrentSlide: (state, { payload }) => {
+      console.log("set current Slide");
+      state.currentUser = payload;
+      state.loggedIn = true;
     },
-
-    setId: (state, action) => {
-      const {key, value} = action.payload;
-      state[key]= value
-    }
+    setPartyId: (state, payload) => {
+      console.log("set Slide Id");
+      state.partyId = payload;
+    },
   },
 });
 
-export const { setParty, setId} = partySlice.actions;
-export default  partySlice.reducer;
+export const { setCurrentParty, setPartyId } = partySlice.actions;
+export default partySlice.reducer;

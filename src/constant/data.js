@@ -301,3 +301,16 @@ export const status = [
   },
 ]
 
+
+export const partyTypes = [
+  {
+    value: "Customer",
+    label: "Customer",
+  },
+  {
+    value: "Supplier",
+    label: "Supplier",
+  },
+];
+
+

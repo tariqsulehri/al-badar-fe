@@ -10,18 +10,54 @@ import { suppliers, lights, category, mediaTypes, dimension, status } from "../.
 
 
 import axios from "axios";
-import { createSlide, findSlideById } from "../../services/apis/slideService";
+import { createSlide, findSlideById, updateSlide } from "../../services/apis/slideService";
 
 const CreateSlide = function () {
   let id = useSelector((state) => state.slide.slideId || null);
   id = id?.payload;
 
-  let [previewImage, setPreviewImage] = useState("");
+
+  const emptyObject = {
+    code: "",
+    supplier: "",
+    provence: "",
+    city: "",
+    area: "",
+    subArea: "",
+    mediaType: "",
+    height_feets: "",
+    width_feets: "",
+    location_from: "",
+    location_to: "",
+    smd_screen: "",
+    no_of_steamers: "",
+    working_hrs_day: "",
+    ad_duration: "",
+    no_of_spots: "",
+    rate_per_week: "0",
+    trafic_facing_coming: "",
+    facing_trafic_going: "",
+    category: "",
+    dimension: "",
+    lights: "",
+    supQuotedPrice: "",
+    supDiscountedPrice: "",
+    supFinalPrice: "",
+    quotedPrice: "",
+    discountedPrice: "",
+    finalPrice: "",
+    latitude: "",
+    longitude: "",
+    eyeBall: "",
+    status: "",
+    is_active: true,
+    image: ""
+  }
+
   let [provences, setProvences] = useState([]);
   let [cities, setCities] = useState([]);
   let [areas, setAreas] = useState([]);
   let [subAreas, setSubAreas] = useState([]);
-
   let [formData, setFormData] = useState({
     code: "",
     supplier: "",
@@ -56,7 +92,7 @@ const CreateSlide = function () {
     eyeBall: "",
     status: "",
     is_active: true,
-    image: previewImage,
+    image: "",
   });
 
   const getProvences = async () => {
@@ -100,7 +136,6 @@ const CreateSlide = function () {
         ...data, // Overwrite with new data from the API
       }));
 
-      setPreviewImage(data.image);
     } catch (error) {
       console.log(error.message);
     }
@@ -139,25 +174,19 @@ const CreateSlide = function () {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleTagChange = (e, values, r) => {
-    console.log(values);
-  };
 
   const handleSubmit = async () => {
-    // axios.post("http://localhost:3500/api/slides/create", formData);
-    createSlide(formData);
-  };
-
-  const handleImageChange = (e) => {
-    try {
-      if (e.target.files?.[0]) {
-        setPreviewImage(URL.createObjectURL(e.target.files[0]));
-        setPreviewImage(e.target.files[0]);
-      }
-    } catch (error) {
-      console.log(error.message);
+    if (!id) {
+      createSlide(formData);
+    } else {
+      await updateSlide(id, formData);
     }
   };
+
+  
+  const handleRefresh = async () => {
+      setFormData({ ...formData, ...emptyObject });
+  } 
 
   const handleImageUpload = async (e) => {
     // e.preventDefault();
@@ -190,38 +219,6 @@ const CreateSlide = function () {
     console.log(controlName);
   };
 
-
-  const handleSupplierChange = async (event, values, controlName) => {
-    setFormData({ ...formData, [`${controlName}`]: values.label });
-    console.log(formData);
-  };
-
-  const handleProvenceChange = async (event, values) => {
-    setFormData({ ...formData, provence: values.label });
-  };
-
-  const handleCityChange = async (event, values) => {
-    setFormData({ ...formData, city: values.label });
-  };
-
-
-  const handleAreaChange = async (event, values) => {
-    setFormData({ ...formData, area: values.label });
-  };
-
-  const handleSubAreaChange = async (event, values) => {
-    setFormData({ ...formData, subArea: values.label });
-  };
-
-  const handleLightsChange = async (event, values) => {
-    setFormData({ ...formData, lights: values.label });
-  };
-
-  const handleCategoryChange = async (event, values) => {
-    setFormData({ ...formData, category: values.label });
-  };
-
-
   return (
     <>
       <div style={{ margin: "2em", textAlign: "center" }}>{/* <h1>Slide Management</h1> */}</div>
@@ -249,13 +246,14 @@ const CreateSlide = function () {
           status={status}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
-          handleSupplierChange={handleSupplierChange}
-          handleProvenceChange={handleProvenceChange}
-          handleCityChange={handleCityChange}
-          handleAreaChange={handleAreaChange}
-          handleSubAreaChange={handleSubAreaChange}
-          handleLightsChange={handleLightsChange}
-          handleCategoryChange={handleCategoryChange}
+          handleRefresh={handleRefresh}
+          // handleSupplierChange={handleSupplierChange}
+          // handleProvenceChange={handleProvenceChange}
+          // handleCityChange={handleCityChange}
+          // handleAreaChange={handleAreaChange}
+          // handleSubAreaChange={handleSubAreaChange}
+          // handleLightsChange={handleLightsChange}
+          // handleCategoryChange={handleCategoryChange}
           handleChangeSelect={handleChangeSelect}
         />
         <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />

@@ -2,9 +2,9 @@
 import httpClient from "../axios";
 import {showToastNotification} from "../../helpers/notificationsHepler"
 
-export const getAllSlides = async (rowsPerPage, pageNo, searchBy, searchText) => {
+export const getAllParties = async (rowsPerPage, pageNo, searchBy, searchText) => {
     try{
-        let {data} = await httpClient.get(`/slide/list?pageSize=${rowsPerPage}&pageNo=${pageNo}&searchBy=${searchBy}&searchText=${searchText}`);
+        let {data} = await httpClient.get(`/Party/list?pageSize=${rowsPerPage}&pageNo=${pageNo}&searchBy=${searchBy}&searchText=${searchText}`);
         return data ? data : { data:null, totalRecords: 0 };
     } catch(error) {
         showToastNotification("error", "Something Went wrong..");
@@ -12,9 +12,10 @@ export const getAllSlides = async (rowsPerPage, pageNo, searchBy, searchText) =>
       }
 };
 
-export const findSlideById = async (id) => {
+export const findPartyById = async (id) => {
     try{
-        const resp = await httpClient.get(`http://localhost:3500/api/slide/find/${id}`);
+        const resp = await httpClient.get(`http://localhost:3500/api/Party/find/${id}`);
+        console.log(resp);
         return resp?.data;
     } catch(error){ 
       console.log("Something Went wrong", "Something Went wrong");
@@ -23,11 +24,15 @@ export const findSlideById = async (id) => {
 };
   
 
-export const createSlide = async (data) => {
+export const createParty = async (data) => {
     try{
-        const res = await httpClient.post("/slide/create", {data});
-        showToastNotification("success", "Slide created succfully..");
-        return res.data.data;
+        const resp = await httpClient.post("/Party/create", {data});
+        data =  resp.data;
+        if(data.status === "error"){
+            return showToastNotification("error", "Duplicate or error while creating party");
+        }
+        showToastNotification("success", "Party created succfully..");
+        return data;
     } catch(error) {
         
      showToastNotification("error", "Something Went wrong");
@@ -35,11 +40,11 @@ export const createSlide = async (data) => {
     }
 };
 
-export const updateSlide = async (id,data) => {
+export const updateParty = async (id,data) => {
     try{
         if(!id) throw new Error("Invalid id");
-        await httpClient.post(`/slide/update/${id}`, {data});
-        showToastNotification("success", "Slide updated successfully..");
+        await httpClient.post(`/Party/update/${id}`, {data});
+        showToastNotification("success", "Party updated successfully..");
         return true;
 
     } catch(error){ 
@@ -48,13 +53,13 @@ export const updateSlide = async (id,data) => {
     }
 };
 
-export const deleteSlide = async (id) => {
+export const deleteParty = async (id) => {
     try{
         
         if(!id) throw new Error("Invalid id");
         
-        await httpClient.get(`/slide/${id}`);
-        showToastNotification("success", 'Slide deleted successfully.');
+        await httpClient.get(`/Party/${id}`);
+        showToastNotification("success", 'Party deleted successfully.');
         return true;
 
     } catch(error) {

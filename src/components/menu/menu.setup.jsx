@@ -50,15 +50,6 @@ const SetupMenu = ({ anchorEl, handleMenuClose }) => {
         Sub Area
       </MenuItem>
 
-      <MenuItem
-        onClick={() => {
-          navigate("/setup/party/list");
-          handleMenuClose();
-        }}
-      >
-        List Party
-      </MenuItem>
-
     </Menu>
 
 

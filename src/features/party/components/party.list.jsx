@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {setSlideId} from "../../features/slides/slice/slideSlice"
+import {partyPartyId} from "../../features/party/slice/partySlice"
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/search.bar.component";
-import SlideTable from "../slides/components/table/slide.table.component"
-import {getAllSlides, deleteSlide} from "../../services/apis/slideService";
+import SlideTable from "../../party/components/
+import {getAllParties} from "../../../services/apis/partyService";
 
-// import "./slides.list.component.css";
+import "./slides.list.component.css";
 
-const SlideList = () => {
+const PartyList = () => {
 
   const ROWS_PER_PAGE =10;
   const DEFAULT_SEARCH_TYPE = "_id"
@@ -64,7 +64,7 @@ const SlideList = () => {
   }, []);
 
   const handleEdit = (id) => {
-    dispatch(setSlideId(id));
+    dispatch(partyPartyId(id));
     navigate(`/slides/create?id=${id}`);
   };
 
@@ -116,4 +116,4 @@ const SlideList = () => {
   }
 };
 
-export default SlideList;
+export default PartyList;

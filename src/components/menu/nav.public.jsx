@@ -8,7 +8,6 @@ const NavPublic = ({ currentUser, handeleLogout }) => {
   return (<ul className="nav-items" id="nav-bar">
         {currentUser ? (
           <>
-            <li className="nav-item">slides</li>
             <li className="nav-item">
               <Link to={`/user/pass`}>Change Password</Link>
             </li>

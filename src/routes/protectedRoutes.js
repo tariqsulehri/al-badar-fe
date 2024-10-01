@@ -73,11 +73,11 @@ const routeObjects = [
     component: ListSubarea,
   },
   {
-    path: "/setup/party/create",
+    path: "/party/create",
     component: CreateParty,
   },
   {
-    path: "/setup/party/list",
+    path: "/party/list",
     component: ListParty,
   },
   {

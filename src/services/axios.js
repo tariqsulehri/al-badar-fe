@@ -1,18 +1,15 @@
 import axios from 'axios';
 
-// const httpClient = axios.create({
-//   baseURL: import.meta.env.VITE_APP_API_BASE_URL
-// });
-
-// const httpClient = axios.create({
-//   baseURL: import.meta.env.VITE_APP_API_BASE_URL
-// });
-
 const httpClient = axios.create({
-  baseURL: "http://localhost:3500/api"
+  baseURL: import.meta.env.VITE_APP_API_BASE_URL
 });
 
-let token = "token"; //localStorage.getItem('token');
+
+// const httpClient = axios.create({
+//   baseURL: "http://localhost:3500/api"
+// });
+
+let token = "token"; 
 
 httpClient.interceptors.request.use(
   config => {

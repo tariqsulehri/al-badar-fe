@@ -5,16 +5,44 @@ import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/search.bar.component";
 import SlideTable from "../slides/components/table/slide.table.component"
 import {getAllSlides, deleteSlide} from "../../services/apis/slideService";
+import DataGridComponent from '../../features/slides/components/grids/slides.mui.datagrid';
 
 // import "./slides.list.component.css";
 
+
+
+const rows = [
+  { id: 1, name: 'John Doe', age: 25, city: 'New York', email: 'john@doe.com' },
+  { id: 2, name: 'Jane Smith', age: 30, city: 'London', email: 'jane@smith.com' },
+  { id: 3, name: 'Alice Johnson', age: 35, city: 'Paris', email: 'alice@johnson.com' },
+  // More rows...
+];
+
+const COLUMNS = [
+  { field: '_id', headerName: '_ID', width: 70 },
+  { field: 'city', headerName: 'City', width: 150 },
+];
+
 const SlideList = () => {
+
+  const [filterModel, setFilterModel] = useState({
+    items: [
+      {
+        columnField: "city",
+        operatorValue: "contains",
+        value: "John",
+      },
+    ],
+  });
+
 
   const ROWS_PER_PAGE =10;
   const DEFAULT_SEARCH_TYPE = "_id"
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [columns, setColumns] = useState(COLUMNS);
 
   const [records, setRecords] = useState(null);
   const [totalRows, setTotalRows] = useState(0);
@@ -77,8 +105,6 @@ const SlideList = () => {
       console.log("Error Deleting Record", error.message);
     }
   };
-
-
   if (records && records.length > 0) {
     return (
       <>
@@ -89,7 +115,7 @@ const SlideList = () => {
                    handleSearch={handleSearch} 
         />
 
-        <SlideTable
+        {/* <SlideTable
           records={records}
           totalRows={totalRows}
           rowsPerPage={rowsPerPage}
@@ -98,7 +124,11 @@ const SlideList = () => {
           handleChangeRowsPerPage={handleChangeRowsPerPage}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
-        />
+        /> */}
+
+      <DataGridComponent rows={records} columns={columns} />
+
+
       </>
 
     );

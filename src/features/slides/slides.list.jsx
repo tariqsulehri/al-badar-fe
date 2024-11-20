@@ -6,7 +6,7 @@ import SearchBar from "../../components/searchBar/search.bar.component";
 import SlideTable from "../slides/components/table/slide.table.component"
 import {getAllSlides, deleteSlide} from "../../services/apis/slideService";
 import DataGridComponent from '../../features/slides/components/grids/slides.mui.datagrid';
-
+import DataTableComponent from '../../features/slides/components/table/slides.mui.datatable'
 // import "./slides.list.component.css";
 
 
@@ -20,7 +20,21 @@ const rows = [
 
 const COLUMNS = [
   { field: '_id', headerName: '_ID', width: 70 },
-  { field: 'city', headerName: 'City', width: 150 },
+  { field: 'provence', headerName: 'Provence', width: 90 },
+  { field: 'city', headerName: 'City', width: 130 },
+  { field: 'area', headerName: 'Area', width: 100 },
+  { field: 'supplier', headerName: 'Supplier', width: 250 },
+  { field: 'mediaType', headerName: 'Media', width: 70 },
+  { field: 'dimension', headerName: 'Dimension', width: 90 },
+  { field: 'height_feets', headerName: 'Height', width: 60 },
+  { field: 'width_feets', headerName: 'Width', width: 60 },
+  { field: 'no_of_steamers', headerName: 'Steamers', width: 80 },
+  { field: 'working_hrs_day', headerName: 'Work-Hrs', width: 80 },
+  { field: 'lights', headerName: 'Lights', width: 70 },
+  { field: 'supQuotedPrice', headerName: 'SQ-Price', width: 80 },
+  { field: 'supDiscountedPrice', headerName: 'SD-Price', width: 80 },
+  { field: 'finalPrice', headerName: 'CF-Price', width: 80 },
+  { field: 'status', headerName: 'Status', width: 80 },
 ];
 
 const SlideList = () => {
@@ -51,7 +65,12 @@ const SlideList = () => {
   const [searchBy, setSearchBy] = useState(DEFAULT_SEARCH_TYPE);
   const [searchText, setSearchText] = useState("");
 
-
+  const handleFilterModelChange = (newModel) => {
+    if (JSON.stringify(newModel) !== JSON.stringify(filterModel)) {
+      console.log('filter modal', newModel);
+      setFilterModel(newModel);
+    }
+  };
   const handleChangeSearchBy = (e) => {
     setSearchBy(e.target.value);
   };
@@ -78,8 +97,8 @@ const SlideList = () => {
 
   const getRecords = async () => {
     try {
-      let {data, totalRecords} = await getAllSlides(rowsPerPage, pageNo, searchBy, searchText);
-      setRecords(data);
+      let {result, status, message}= await getAllSlides(rowsPerPage, pageNo, searchBy, searchText);
+      setRecords(result.data);
       setTotalRows(totalRecords);
 
     } catch (error) {}
@@ -126,9 +145,9 @@ const SlideList = () => {
           handleDelete={handleDelete}
         /> */}
 
-      <DataGridComponent rows={records} columns={columns} />
-
-
+      {/* <DataGridComponent rows={records} columns={columns} filterModel={filterModel} handleFilterModelChange={handleFilterModelChange} /> */}
+      <DataTableComponent />
+      
       </>
 
     );

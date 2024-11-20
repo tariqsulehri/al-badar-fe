@@ -2,10 +2,11 @@ import React from "react";
 import IOSSwitch from "../../../../components/common/switch/Switch";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Table, TableBody, TableCell, IconButton, TableContainer, TableHead, TableRow, TablePagination, Box } from "@mui/material";
+import { CircularProgress, Paper, Table, TableBody, TableCell, IconButton, TableContainer, TableHead, TableRow, TablePagination, Typography } from "@mui/material";
 import "./slide.table.css";
 
 const SlideTable = ({ records, totalRows, rowsPerPage, pageNo, handleChangePage, handleChangeRowsPerPage, handleEdit, handleDelete }) => {
+  
   if (records && records.length > 0) {
     return (
       <div>

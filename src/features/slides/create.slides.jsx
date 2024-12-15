@@ -247,13 +247,6 @@ const CreateSlide = function () {
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           handleRefresh={handleRefresh}
-          // handleSupplierChange={handleSupplierChange}
-          // handleProvenceChange={handleProvenceChange}
-          // handleCityChange={handleCityChange}
-          // handleAreaChange={handleAreaChange}
-          // handleSubAreaChange={handleSubAreaChange}
-          // handleLightsChange={handleLightsChange}
-          // handleCategoryChange={handleCategoryChange}
           handleChangeSelect={handleChangeSelect}
         />
         <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />

@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import MUIDataTable from "mui-datatables";
+import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
+import { addSlide } from "../../../../features/slides/slice/slidesForPptxSlice";
+import pptxHelper from "../../components/helpers/pptxHelper";
+import PptxGenJS from "pptxgenjs";
 
 const DataTableComponent = ({ data, columns }) => {
   const [selectedRows, setSelectedRows] = useState([]);
-
-  // State for selected row indexes
   const [selectedRowIndexes, setSelectedRowIndexes] = useState([]);
+  let slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
+
+  const dispatch = useDispatch();
 
   // Custom options for the table
   const options = {
@@ -15,51 +20,63 @@ const DataTableComponent = ({ data, columns }) => {
     search: true,
     searchOpen: true,
     selectableRowsOnClick: true,
-    selectableRowsHideCheckboxes: false, // Shows checkboxes for row selection
-    rowsSelected: selectedRowIndexes, // Control selected rows by index
+    selectableRowsHideCheckboxes: false,
+    rowsSelected: selectedRowIndexes, // Bind selected rows to state
+    pagination: false, // Disable pagination
+    onRowSelectionChange: (currentRowsSelected, allRowsSelected) => {
+      // Extract the indexes of the selected rows
+      const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
 
-    onRowsSelect: (currentRowsSelected, allRowsSelected) => {
-      // Update the selected rows based on indexes
-      const selectedIndexes = allRowsSelected.map((row) => {
-        row.dataIndex;
-      });
+      // Update local state for selected row indexes
       setSelectedRowIndexes(selectedIndexes);
 
-      // Update selected row data
+      // Get the data for selected rows
       const selectedData = selectedIndexes.map((index) => data[index]);
+
+      // Update local state for selected rows
       setSelectedRows(selectedData);
+
+      // Dispatch the action to update Redux state
+      dispatch(addSlide(selectedData));
     },
   };
 
-  const handleCreatePdf = async () =>{
-    // Logic for creating PDF
-    console.log("Creating PDF...", selectedRows);
-  }
+  const handleCreatePptx = async () => {
+    if (slides.length === 0) {
+      console.error("No slides selected to create PDF.");
+      return;
+    }
+    try {
+      let pptx = new PptxGenJS();
+      await pptxHelper.createPptx(pptx, slides);
+      pptx.writeFile("test.pptx");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleCreateQuote = async () => {
+    if (slides.length === 0) {
+      console.error("Quote Created....");
+      return;
+    }
+    try {
+      console.error("No slides selected to create Quote.");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div>
-      <CustomButton id="CreatePdf" name="createdPdf" label="Create PDF" handleClick={handleCreatePdf} />
+      <CustomButton id="CreatePdf" name="createPdf" label="Create PDF" handleClick={handleCreatePptx} />
+      <CustomButton id="CreateQuote" name="createQuote" label="Create Quote" handleClick={handleCreatePptx} />
       <MUIDataTable
-        title={"Employee List"}
-        data={data.map(Object.values)} // Converts objects into arrays for display
+        title="Employee List"
+        data={data.map(Object.values)} // Ensure data is displayed as arrays
         columns={columns}
         options={options}
       />
-
-      <div style={{ marginTop: "20px" }}>
-        <h3>Selected Rows:</h3>
-        {selectedRows.length > 0 ? (
-          <ul>
-            {selectedRows.map((row, index) => (
-              <li key={index}>
-                {row}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No rows selected.</p>
-        )}
-      </div>
     </div>
   );
 };

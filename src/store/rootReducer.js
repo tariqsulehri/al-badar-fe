@@ -5,6 +5,7 @@ import subAreaSlice from "../features/config/subarea/slice/subAreaSlice";
 import citySlice from "../features/config/city/slice/citySlice";
 import provSlice from "../features/config/provience/slice/provSlice";
 import slideSlice from "../features/slides/slice/slideSlice";
+import slidesForPptxSlice from "../features/slides/slice/slidesForPptxSlice";
 import partySlice from "../features/party/slice/partySlice";
 
 export default combineReducers({
@@ -15,4 +16,5 @@ export default combineReducers({
     prov :  provSlice,
     slide :  slideSlice,
     party : partySlice,
+    slidesForPptx : slidesForPptxSlice,  // Add your other slices here...
 });

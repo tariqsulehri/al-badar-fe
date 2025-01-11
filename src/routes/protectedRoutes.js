@@ -23,6 +23,7 @@ const ListSubarea =  lazy(()=> import ("../features/config/subarea/list.subarea"
 
 const CreateSlide  = lazy(()=> import("../features/slides/create.slides"));
 const SlideList =  lazy(()=> import("../features/slides/slides.list"));
+const SelectedSlideList =  lazy(()=> import("../features/slides/selected.slides.list"));
 
 
 
@@ -87,6 +88,10 @@ const routeObjects = [
   {
     path: "/slides/list", 
     component: SlideList,
+  },
+  {
+    path: "/slides/selected_slides", 
+    component: SelectedSlideList,
   }
   
 ];

@@ -7,15 +7,18 @@ import { getAllCitiesForSelection } from "../../services/apis/config/cityService
 import { getAllAreasForSelection } from "../../services/apis/config/areaService";
 import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
 import { suppliers, lights, category, mediaTypes, dimension, status } from "../../constant/data";
-
-
 import axios from "axios";
 import { createSlide, findSlideById, updateSlide } from "../../services/apis/slideService";
 
-const CreateSlide = function () {
-  let id = useSelector((state) => state.slide.slideId || null);
-  id = id?.payload;
-
+const CreateSlide = () => {
+  const id = useSelector((state) => state.slide.slideId || null);
+  const [sid, setSid] = useState(null);
+  const [provences, setProvences] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [subAreas, setSubAreas] = useState([]);
+  const [formData, setFormData] = useState(null); // Initially null
+  const [image, setImage] =  useState(null);
 
   const emptyObject = {
     code: "",
@@ -51,81 +54,21 @@ const CreateSlide = function () {
     eyeBall: "",
     status: "",
     is_active: true,
-    image: ""
-  }
-
-  let [provences, setProvences] = useState([]);
-  let [cities, setCities] = useState([]);
-  let [areas, setAreas] = useState([]);
-  let [subAreas, setSubAreas] = useState([]);
-  let [formData, setFormData] = useState({
-    code: "",
-    supplier: "",
-    provence: "",
-    city: "",
-    area: "",
-    subArea: "",
-    mediaType: "",
-    height_feets: "",
-    width_feets: "",
-    location_from: "",
-    location_to: "",
-    smd_screen: "",
-    no_of_steamers: "",
-    working_hrs_day: "",
-    ad_duration: "",
-    no_of_spots: "",
-    rate_per_week: "0",
-    trafic_facing_coming: "",
-    facing_trafic_going: "",
-    category: "",
-    dimension: "",
-    lights: "",
-    supQuotedPrice: "",
-    supDiscountedPrice: "",
-    supFinalPrice: "",
-    quotedPrice: "",
-    discountedPrice: "",
-    finalPrice: "",
-    latitude: "",
-    longitude: "",
-    eyeBall: "",
-    status: "",
-    is_active: true,
     image: "",
-  });
-
-  const getProvences = async () => {
-    try {
-      let resp = await getAllProvencsForSelection();
-      await setProvences(resp);
-    } catch (error) {
-      console.log(error.message);
-    }
   };
 
-  const getCities = async () => {
+  const fetchSelections = async () => {
     try {
-      let resp = await getAllCitiesForSelection();
-      await setCities(resp);
+      const provencesResp = await getAllProvencsForSelection();
+      const citiesResp = await getAllCitiesForSelection();
+      const areasResp = await getAllAreasForSelection();
+      const subAreasResp = await getAllSubAreasForSelection();
+      setProvences(provencesResp);
+      setCities(citiesResp);
+      setAreas(areasResp);
+      setSubAreas(subAreasResp);
     } catch (error) {
-      console.log(error.message);
-    }
-  };
-  const getAreas = async () => {
-    try {
-      let resp = await getAllAreasForSelection();
-      await setAreas(resp);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-  const getSubAreas = async () => {
-    try {
-      let resp = await getAllSubAreasForSelection();
-      await setSubAreas(resp);
-    } catch (error) {
-      console.log(error.message);
+      console.error("Error fetching selection data:", error.message);
     }
   };
 
@@ -133,124 +76,142 @@ const CreateSlide = function () {
     try {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        ...data, // Overwrite with new data from the API
+        ...data, // Merge new data into current state
       }));
-
     } catch (error) {
-      console.log(error.message);
+      console.error("Error updating form data:", error.message);
     }
   };
 
   useEffect(() => {
-    const fetchSlide = async () => {
-      await getProvences();
-      await getCities();
-      await getAreas();
-      await getSubAreas();
-    };
-    fetchSlide();
-  }, []); // Runs when `id` changes
+    fetchSelections();
+    setSid(id?.payload || null);
+  }, [id]);
 
   useEffect(() => {
     const fetchSlide = async () => {
       try {
-        if (id) {
-          const resp = await findSlideById(id);
-          await fillSlideObject(resp.result);
+        if (sid) {
+          const response = await findSlideById(sid);
+          fillSlideObject(response.result || emptyObject);
+        } else {
+          setFormData(emptyObject); // Reset to empty when no ID
         }
       } catch (error) {
-        console.log(error.message);
+        console.error("Error fetching slide:", error.message);
       }
     };
-
     fetchSlide();
-  }, [id]); // Runs when `id` changes
-
-  useEffect(() => {
-
-  }, [formData]); // Runs whenever formData changes
+  }, [sid]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
   const handleSubmit = async () => {
-    if (!id) {
-      createSlide(formData);
-    } else {
-      await updateSlide(id, formData);
-    }
-  };
-
-  
-  const handleRefresh = async () => {
-      setFormData({ ...formData, ...emptyObject });
-  } 
-
-  const handleImageUpload = async (e) => {
-    // e.preventDefault();
     try {
-      if (!e.target.files?.[0]) {
-        console.log("Please select a file...");
-      }
-
-      setPreviewImage(URL.createObjectURL(e.target.files[0]));
-      setPreviewImage(e.target.files[0]);
-
-      const fileFormData = new FormData();
-      fileFormData.append("image", e.target.files[0]);
-
-      const result = await axios.post("http://localhost:3500/api/slide/upload", fileFormData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      if (result.data) {
-        setFormData({ ...formData, image: result.data.file });
+      if (!id) {
+        await createSlide(formData);
+      } else {
+        await updateSlide(id, formData);
       }
     } catch (error) {
-      console.log(error.message);
+      console.error("Error submitting form:", error.message);
     }
   };
 
+  const handleRefresh = () => {
+    setFormData({ ...emptyObject });
+  };
 
-  const handleChangeSelect = async (event, values, controlName) => {
-    setFormData({ ...formData, [`${controlName}`]: values.label });
-    console.log(controlName);
+  const handleImageUpload = async (e) => {
+    try {
+      // Check if a file is selected
+      const file = e.target.files?.[0];
+      if (!file) {
+        console.log("Please select a file.");
+        return;
+      }
+  
+      // Validate file type (e.g., only allow images)
+      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validImageTypes.includes(file.type)) {
+        console.log("Please upload a valid image file (JPEG, PNG, GIF).");
+        return;
+      }
+  
+      // Prepare the file for upload
+      const fileFormData = new FormData();
+      fileFormData.append("image", file);
+  
+      // Make API request to upload the image
+      const result = await axios.post(
+        "http://localhost:3500/api/slide/upload",
+        fileFormData,
+        {
+          headers: { "Content-Type": "multipart/form-data", "x-auth-token":"token" },
+        }
+      );
+  
+      // Check if the response contains the uploaded file data
+      if (result.data?.file) {
+        setFormData((prevData) => ({
+          ...prevData,
+          image: result.data.file,
+        }));
+      } else {
+        console.error("Image upload failed. No file data in response.");
+      }
+    } catch (error) {
+      // Log error message
+      console.error("Error uploading image:", error?.response?.data?.message || error.message);
+    }
+  };
+  
+
+  const handleChangeSelect = (event, values, controlName) => {
+    setFormData((prevData) => ({ ...prevData, [controlName]: values.label }));
   };
 
   return (
     <>
-      <div style={{ margin: "2em", textAlign: "center" }}>{/* <h1>Slide Management</h1> */}</div>
-
-      <div
-        style={{
-          margin: "0 1%",
-          display: "grid",
-          gridTemplateColumns: "60% 40%",
-          // border: "1px solid #000",
-          padding: "0.5em",
-        }}
-      >
-        <SlideDetail
-          formData={formData}
-          suppliers={suppliers}
-          provences={provences}
-          cities={cities}
-          areas={areas}
-          subAreas={subAreas}
-          lights={lights}
-          category={category}
-          mediaTypes={mediaTypes}
-          dimension={dimension}
-          status={status}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          handleRefresh={handleRefresh}
-          handleChangeSelect={handleChangeSelect}
-        />
-        <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />
+      <div style={{ margin: "2em", textAlign: "center" }}>
+        <h1>Slide Management</h1>
       </div>
+
+      {formData ? (
+        <div
+          style={{
+            margin: "0 1%",
+            display: "grid",
+            gridTemplateColumns: "60% 40%",
+            padding: "0.5em",
+          }}
+        >
+          <SlideDetail
+            formData={formData}
+            suppliers={suppliers}
+            provences={provences}
+            cities={cities}
+            areas={areas}
+            subAreas={subAreas}
+            lights={lights}
+            category={category}
+            mediaTypes={mediaTypes}
+            dimension={dimension}
+            status={status}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            handleRefresh={handleRefresh}
+            handleChangeSelect={handleChangeSelect}
+          />
+          <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />
+        </div>
+      ) : (
+        <div style={{ textAlign: "center" }}>
+          <p>Loading form data...</p>
+        </div>
+      )}
     </>
   );
 };

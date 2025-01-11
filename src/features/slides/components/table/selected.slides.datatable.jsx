@@ -1,21 +1,17 @@
 import React, { useState } from "react";
-import {useNavigate} from 'react-router-dom';
 import MUIDataTable from "mui-datatables";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
-import { addSlide } from "../../../../features/slides/slice/slidesForPptxSlice";
-import { setSlideId } from "../../../../features/slides/slice/slideSlice";
-import pptxHelper from "../../components/helpers/pptxHelper";
+import { addSlide } from "../../slice/slidesForPptxSlice";
+import pptxHelper from "../helpers/pptxHelper";
 import PptxGenJS from "pptxgenjs";
 
-const DataTableComponent = ({ data, columns }) => {
+const SelectedDataTableComponent = ({ data, columns }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowIndexes, setSelectedRowIndexes] = useState([]);
   let slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
 
   // Custom options for the table
   const options = {
@@ -23,14 +19,10 @@ const DataTableComponent = ({ data, columns }) => {
     selectableRows: "multiple",
     search: true,
     searchOpen: true,
-    selectableRowsOnClick: false,
+    selectableRowsOnClick: true,
     selectableRowsHideCheckboxes: false,
     rowsSelected: selectedRowIndexes, // Bind selected rows to state
     pagination: false, // Disable pagination
-    onRowClick: (rowData, rowMeta) => {
-      // console.log(data[rowMeta.dataIndex]._id);
-      handleSelectSlide(data[rowMeta.dataIndex]._id);
-    },
     onRowSelectionChange: (currentRowsSelected, allRowsSelected) => {
       // Extract the indexes of the selected rows
       const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
@@ -63,7 +55,7 @@ const DataTableComponent = ({ data, columns }) => {
     }
   };
 
-  const handleSelectedList = async () => {
+  const handleCreateQuote = async () => {
     if (slides.length === 0) {
       console.error("Quote Created....");
       return;
@@ -75,21 +67,10 @@ const DataTableComponent = ({ data, columns }) => {
     }
   };
 
-  const handleSelectSlide = async (slideId) => {
-    try {
-      dispatch(setSlideId(slideId));
-      navigate("/slides/create");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-
   return (
     <div>
-      <CustomButton id="createPdf" name="createPdf" label="Create PDF" handleClick={handleCreatePptx} />
-      <CustomButton id="editSlide" name="editSlide" label="Edit Slide" handleClick={handleSelectedList} />
-      <CustomButton id="selectedList" name="selectedList" label="Selected List" handleClick={handleSelectedList} />
+      <CustomButton id="CreatePdf" name="createPdf" label="Create PDF" handleClick={handleCreatePptx} />
+      <CustomButton id="CreateQuote" name="createQuote" label="Create Quote" handleClick={handleCreatePptx} />
       <MUIDataTable
         title="Employee List"
         data={data.map(Object.values)} // Ensure data is displayed as arrays

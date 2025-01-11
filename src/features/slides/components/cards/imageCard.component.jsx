@@ -2,6 +2,7 @@ import { Card, CardMedia, CardContent, CardActions, Typography, Grid } from "@mu
 import FileUploader from "../../../../components/form-controls/input/fileUpload";
 
 const ImageCard = ({previewImage, handleImageUpload})=>{
+  console.log(previewImage)
     return(
         <Card>
         <CardContent>

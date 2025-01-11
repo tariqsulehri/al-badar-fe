@@ -15,7 +15,6 @@ const slideSlice = createSlice({
       state.loggedIn = true;
     },
     setSlideId: (state, payload) => {
-      console.log("set Slide Id");
       state.slideId = payload;
     },
   },

@@ -7,7 +7,7 @@ function CustomSelect({ label, options, width, onChange, name, value, defaultVal
   return (
     <div className="layout">
       <Autocomplete
-      className="custom-select"
+        className="custom-select"
         size="medium"
         name={name}
         options={options}

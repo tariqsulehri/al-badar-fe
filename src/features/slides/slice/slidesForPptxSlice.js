@@ -10,7 +10,7 @@ const slidesForPptxSlice = createSlice({
   reducers: {
     // Add slides to the selectedSlides array
     addSlide: (state, { payload }) => {
-      console.log(payload);
+      // console.log(" slidesForPptx --->",payload);
       return {
         ...state,
         slidesForPptx: [...payload], // Replace or update the Redux state with the selected data

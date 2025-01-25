@@ -64,12 +64,13 @@ const DataTableComponent = ({ data, columns }) => {
   };
 
   const handleSelectedList = async () => {
+   
     if (slides.length === 0) {
       console.error("Quote Created....");
       return;
     }
     try {
-      console.error("No slides selected to create Quote.");
+      navigate('/slides/selected_slides')      
     } catch (error) {
       console.log(error.message);
     }

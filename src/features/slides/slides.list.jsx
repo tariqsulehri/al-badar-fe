@@ -28,8 +28,6 @@ const columns = [
 ];
 
 const SlideList = () => {
-  const slides = useSelector((state) => state.slidesForPptx);
-
   const [filterModel, setFilterModel] = useState({
     items: [
       {

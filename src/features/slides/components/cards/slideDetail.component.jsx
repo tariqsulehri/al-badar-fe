@@ -131,7 +131,7 @@ const SlideDetail = function ({
                   defaultValue={formData.trafic_facing_coming}
                   placeholder="Trafic comming from"
                   required={true}
-                  label="FTCF - Facing Trafic Comming From"
+                  label="FTCF - Facing Traffic Coming From"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -144,7 +144,7 @@ const SlideDetail = function ({
                   defaultValue={formData.facing_trafic_going}
                   placeholder="TGT -  Trafic Going To"
                   required={true}
-                  label="TGT - Trafic Going To"
+                  label="TGT - Traffic Going To"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -181,7 +181,7 @@ const SlideDetail = function ({
                   defaultValue={formData.height_feets}
                   placeholder="Enter Height"
                   required={true}
-                  label="Height in feets"
+                  label="Height in Feet"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -194,7 +194,7 @@ const SlideDetail = function ({
                   defaultValue={formData.width_feets}
                   placeholder="Enter width"
                   required={true}
-                  label="Width in feets"
+                  label="Width in Feet"
                   width={175}
                   onChange={(e) => handleChange(e)}
                 />
@@ -257,7 +257,7 @@ const SlideDetail = function ({
                   defaultValue={formData.supDiscountedPrice}
                   placeholder="Supplier discounted price"
                   required={true}
-                  label="Supplier discounted Price"
+                  label="Supplier Discounted Price"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -270,7 +270,7 @@ const SlideDetail = function ({
                   defaultValue={formData.supFinalPrice}
                   placeholder="Supplier final price"
                   required={true}
-                  label="Supplier final pirce"
+                  label="Supplier Final Price"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -283,7 +283,7 @@ const SlideDetail = function ({
                   defaultValue={formData.quotedPrice}
                   placeholder="Customer quoted price"
                   required={true}
-                  label="Customer quoted Price"
+                  label="Customer Quoted Price"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -309,7 +309,7 @@ const SlideDetail = function ({
                   defaultValue={formData.finalPrice}
                   placeholder="Customer final price"
                   required={true}
-                  label="Customer Final Pirce"
+                  label="Customer Final Price"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -348,7 +348,7 @@ const SlideDetail = function ({
                   defaultValue={formData.eyeBall}
                   placeholder="Eye Ball view"
                   required={true}
-                  label="Eye Ball view"
+                  label="Eye Ball View"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />

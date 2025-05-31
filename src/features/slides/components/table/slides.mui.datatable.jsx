@@ -1,82 +1,150 @@
-import React, { useState } from "react";
-import {useNavigate} from 'react-router-dom';
+import React, { useMemo } from "react";
+import { useNavigate } from 'react-router-dom';
 import MUIDataTable from "mui-datatables";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
-import { addSlide } from "../../../../features/slides/slice/slidesForPptxSlice";
+import { addSlide, clearSlides, setPagination } from "../../../../features/slides/slice/slidesForPptxSlice";
 import { setSlideId } from "../../../../features/slides/slice/slideSlice";
 import pptxHelper from "../../components/helpers/pptxHelper";
 import PptxGenJS from "pptxgenjs";
 
-const DataTableComponent = ({ data, columns }) => {
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedRowIndexes, setSelectedRowIndexes] = useState([]);
-  let slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
-
+const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selectedSlides = useSelector((state) => state.slidesForPptx.slidesForPptx);
+  const selectedSlideIds = useSelector((state) => state.slidesForPptx.selectedSlideIds);
 
+  console.log('DataTable received data:', data);
+
+  // Transform data to match column order and add selection state
+  const transformedData = useMemo(() => {
+    console.log('Transforming data:', data);
+    if (!Array.isArray(data)) {
+      console.error('Data is not an array:', data);
+      return [];
+    }
+
+    return data.map(row => {
+      if (!row) {
+        console.warn('Row is undefined or null');
+        return columns.map(() => '');
+      }
+
+      return columns.map(col => {
+        const value = row[col.name];
+        console.log(`Column ${col.name}:`, value);
+        // Handle null/undefined values
+        if (value === null || value === undefined) return '';
+        // Handle numbers
+        if (typeof value === 'number') return value.toString();
+        // Handle objects
+        if (typeof value === 'object') return JSON.stringify(value);
+        // Handle strings and other types
+        return value;
+      });
+    });
+  }, [data, columns]);
+
+  console.log('Transformed data:', transformedData);
+
+  // Get selected row indexes for current page
+  const getSelectedRowIndexes = () => {
+    if (!Array.isArray(data)) return [];
+    if (!selectedSlideIds || typeof selectedSlideIds !== 'object') return [];
+    
+    return data
+      .map((row, index) => {
+        if (!row || !row._id) return -1;
+        // Add defensive check for selectedSlideIds[row._id]
+        return selectedSlideIds[row._id] === true ? index : -1;
+      })
+      .filter(index => index !== -1);
+  };
 
   // Custom options for the table
   const options = {
     filterType: "dropdown",
     selectableRows: "multiple",
-    search: true,
-    searchOpen: true,
+    search: false, // Disable built-in search as we have our own
     selectableRowsOnClick: false,
     selectableRowsHideCheckboxes: false,
-    rowsSelected: selectedRowIndexes, // Bind selected rows to state
-    pagination: false, // Disable pagination
+    rowsSelected: getSelectedRowIndexes(),
+    pagination: true,
+    count: totalRows || 0,
+    page: page || 0,
+    rowsPerPage: rowsPerPage || 10,
+    rowsPerPageOptions: [10, 25, 50, 100],
     onRowClick: (rowData, rowMeta) => {
-      // console.log(data[rowMeta.dataIndex]._id);
-      handleSelectSlide(data[rowMeta.dataIndex]._id);
+      const row = data[rowMeta.dataIndex];
+      if (row && row._id) {
+        handleSelectSlide(row._id);
+      }
     },
     onRowSelectionChange: (currentRowsSelected, allRowsSelected) => {
-      // Extract the indexes of the selected rows
       const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
-
-      // Update local state for selected row indexes
-      setSelectedRowIndexes(selectedIndexes);
-
-      // Get the data for selected rows
-      const selectedData = selectedIndexes.map((index) => data[index]);
-
-      // Update local state for selected rows
-      setSelectedRows(selectedData);
-
-      // Dispatch the action to update Redux state
+      const selectedData = selectedIndexes
+        .map((index) => data[index])
+        .filter(Boolean); // Remove any undefined/null values
       dispatch(addSlide(selectedData));
+    },
+    onChangePage: (newPage) => {
+      dispatch(setPagination({ page: newPage, rowsPerPage }));
+      onPageChange(newPage);
+    },
+    onChangeRowsPerPage: (numberOfRows) => {
+      dispatch(setPagination({ page: 0, rowsPerPage: numberOfRows }));
+      onRowsPerPageChange(numberOfRows);
+    },
+    customToolbar: () => {
+      return (
+        <div style={{ display: 'flex', gap: '10px', padding: '8px' }}>
+          <CustomButton 
+            id="selectAll" 
+            name="selectAll" 
+            label="Select All" 
+            handleClick={() => {
+              const validData = data.filter(Boolean); // Remove any undefined/null values
+              dispatch(addSlide(validData));
+            }} 
+          />
+          <CustomButton 
+            id="clearSelection" 
+            name="clearSelection" 
+            label="Clear Selection" 
+            handleClick={() => dispatch(clearSlides())} 
+          />
+        </div>
+      );
     },
   };
 
   const handleCreatePptx = async () => {
-    if (slides.length === 0) {
+    if (!selectedSlides || selectedSlides.length === 0) {
       console.error("No slides selected to create PDF.");
       return;
     }
     try {
       let pptx = new PptxGenJS();
-      await pptxHelper.createPptx(pptx, slides);
+      await pptxHelper.createPptx(pptx, selectedSlides);
       pptx.writeFile("test.pptx");
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const handleSelectedList = async () => {
-   
-    if (slides.length === 0) {
-      console.error("Quote Created....");
+  const handleViewSelected = () => {
+    if (!selectedSlides || selectedSlides.length === 0) {
+      console.error("No slides selected.");
       return;
     }
-    try {
-      navigate('/slides/selected_slides')      
-    } catch (error) {
-      console.log(error.message);
-    }
+    navigate('/slides/selected_slides');
   };
 
   const handleSelectSlide = async (slideId) => {
+    if (!slideId) {
+      console.error("Invalid slide ID");
+      return;
+    }
     try {
       dispatch(setSlideId(slideId));
       navigate("/slides/create");
@@ -85,15 +153,25 @@ const DataTableComponent = ({ data, columns }) => {
     }
   };
 
-
   return (
-    <div>
-      <CustomButton id="createPdf" name="createPdf" label="Create PDF" handleClick={handleCreatePptx} />
-      <CustomButton id="editSlide" name="editSlide" label="Edit Slide" handleClick={handleSelectedList} />
-      <CustomButton id="selectedList" name="selectedList" label="Selected List" handleClick={handleSelectedList} />
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <CustomButton 
+          id="createPdf" 
+          name="createPdf" 
+          label="Create PDF" 
+          handleClick={handleCreatePptx} 
+        />
+        <CustomButton 
+          id="viewSelected" 
+          name="viewSelected" 
+          label="View Selected" 
+          handleClick={handleViewSelected} 
+        />
+      </div>
       <MUIDataTable
-        title="Employee List"
-        data={data.map(Object.values)} // Ensure data is displayed as arrays
+        title="Slides List"
+        data={transformedData}
         columns={columns}
         options={options}
       />

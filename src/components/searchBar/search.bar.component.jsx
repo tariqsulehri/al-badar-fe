@@ -1,33 +1,56 @@
-import React from "react";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from 'react';
+import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Box } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
-import { IconButton, InputLabel, MenuItem, Select, FormControl, InputBase, Paper, Box } from "@mui/material";
-import "./search.bar.css";
+const SearchBar = ({ onSearch }) => {
+  const [searchBy, setSearchBy] = useState('code');
+  const [searchText, setSearchText] = useState('');
 
-const SearchBar = ({searchBy, searchText ,onChangeSearchBy, onSearchChange, handleSearch }) => {
+  const handleSearch = () => {
+    onSearch(searchBy, searchText);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
-    <div className="page-wrapper">
-      <Box className="table-header">
-        <Box className="searchWrapper">
-          <FormControl fullWidth sx={{ width: 140, height: 40 }}>
-            <InputLabel id="demo-simple-select-label">Search </InputLabel>
-            <Select labelId="demo-simple-select-label" id="demo-simple-select" sx={{ height: 40 }} label="Search Types" value={searchBy} onChange={onChangeSearchBy}>
-              <MenuItem selected value="_id">
-                Id
-              </MenuItem>
-              <MenuItem value="name">Name</MenuItem>
-            </Select>
-          </FormControl>
+    <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
+      <FormControl sx={{ minWidth: 120 }}>
+        <InputLabel>Search By</InputLabel>
+        <Select
+          value={searchBy}
+          label="Search By"
+          onChange={(e) => setSearchBy(e.target.value)}
+        >
+          <MenuItem value="code">Code</MenuItem>
+          <MenuItem value="city">City</MenuItem>
+          <MenuItem value="area">Area</MenuItem>
+          <MenuItem value="supplier">Supplier</MenuItem>
+          <MenuItem value="mediaType">Media Type</MenuItem>
+        </Select>
+      </FormControl>
 
-          <Paper component="form" sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400, height: "40px" }}>
-            <InputBase onChange={onSearchChange} value={searchText} sx={{ ml: 1, flex: 1 }} placeholder="Search by id, user" />
-            <IconButton onClick={handleSearch} type="button" sx={{ p: "4px" }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-          </Paper>
-        </Box>
-      </Box>
-    </div>
+      <TextField
+        fullWidth
+        label="Search"
+        variant="outlined"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onKeyPress={handleKeyPress}
+      />
+
+      <Button
+        variant="contained"
+        startIcon={<SearchIcon />}
+        onClick={handleSearch}
+        sx={{ height: 56 }}
+      >
+        Search
+      </Button>
+    </Box>
   );
 };
 

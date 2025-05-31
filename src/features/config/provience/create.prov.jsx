@@ -105,7 +105,7 @@ const CreateProv = () => {
                   defaultValue={formData.name}
                   placeholder="Provence Name"
                   required={true}
-                  label="Provence Name"
+                  label="Province Name"
                   width={"100%"}
                   onChange={(e) => handleChange(e)}
                 />
@@ -121,7 +121,7 @@ const CreateProv = () => {
             <CustomButton
               id="list"
               name="list"
-              label="list"
+              label="List"
               handleClick={() => {
                 navigate(`/setup/prov/list`);
               }}

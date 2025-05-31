@@ -84,7 +84,7 @@ const PartyDetail = function ({ formData, provences, cities, partyTypes, handleC
                 defaultValue={formData.phoneNo}
                 placeholder="Part Contact Number"
                 required={true}
-                label="Part Contact number"
+                label="Party Contact Number"
                 width={"100%"}
                 onChange={(e) => handleChange(e)}
               />
@@ -97,7 +97,7 @@ const PartyDetail = function ({ formData, provences, cities, partyTypes, handleC
                 defaultValue={formData.cellNo}
                 placeholder="Party cell number"
                 required={true}
-                label="Party cell number"
+                label="Party Cell Number"
                 width={"100%"}
                 onChange={(e) => handleChange(e)}
               />
@@ -110,7 +110,7 @@ const PartyDetail = function ({ formData, provences, cities, partyTypes, handleC
                 defaultValue={formData.email}
                 placeholder="Party email"
                 required={true}
-                label="Party email address"
+                label="Party Email Address"
                 width={"100%"}
                 onChange={(e) => handleChange(e)}
               />
@@ -175,7 +175,7 @@ const PartyDetail = function ({ formData, provences, cities, partyTypes, handleC
                 defaultValue={formData.gst}
                 placeholder="Sales Tax number (GST) "
                 required={true}
-                label="GST number"
+                label="GST Number"
                 width={"100%"}
                 onChange={(e) => handleChange(e)}
               />

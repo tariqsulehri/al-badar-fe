@@ -63,7 +63,7 @@ const LoginForm = (props) => {
                   disabled={loading}
                   placeholder="User Name or Email"
                   labelClassName="labelfield"
-                  label="User Name or Email"
+                  label="Username or Email"
                   {...inputProps}
                 />
               </div>

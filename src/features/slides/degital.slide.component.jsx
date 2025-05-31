@@ -50,7 +50,7 @@ function DigitalSlide({ formData, handleChange }) {
           defaultValue={formData.no_of_steamers}
           placeholder="No of steamers"
           required={true}
-          label="No of steamers"
+          label="No. of Steamers"
           width={"100%"}
           onChange={(e) => handleChange(e)}
         />
@@ -62,7 +62,7 @@ function DigitalSlide({ formData, handleChange }) {
           defaultValue={formData.working_hrs_day}
           placeholder="Working hrs a day"
           required={true}
-          label="Working hrs a day"
+          label="Working Hours a Day"
           width={"100%"}
           onChange={(e) => handleChange(e)}
         />
@@ -86,7 +86,7 @@ function DigitalSlide({ formData, handleChange }) {
           defaultValue={formData.no_of_spots}
           placeholder="No of Spots"
           required={true}
-          label="No of Spots"
+          label="No. of Spots"
           width={"100%"}
           onChange={(e) => handleChange(e)}
         />
@@ -98,7 +98,7 @@ function DigitalSlide({ formData, handleChange }) {
           defaultValue={formData.rate_per_week}
           placeholder="Rate per week"
           required={true}
-          label="Rate per week"
+          label="Rate per Week"
           width={"100%"}
           onChange={(e) => handleChange(e)}
         />

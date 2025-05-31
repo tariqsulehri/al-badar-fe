@@ -1,13 +1,58 @@
 import { createNotification } from "../../helpers/notificationsHepler";
 // import httpClient from "../axios";
 
-export const login = async (data) => {
-    try{
-        // we will call our login here and return data accordingly
-        // const res = await httpClient.post("/photos",{...data});
-        return {username: data.username, password: data.password };
-    } catch(error) {
-      createNotification("error", error.message);
-      console.log("Something Went wrong", error.message);
-    }
+// Temporary static authentication for development
+const STATIC_CREDENTIALS = {
+  username: 'admin',
+  password: 'admin',
+  role: 'admin'
+};
+
+export const login = async (username, password) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  if (username === STATIC_CREDENTIALS.username && password === STATIC_CREDENTIALS.password) {
+    // Create a simple token with user info
+    const token = btoa(JSON.stringify({
+      username: STATIC_CREDENTIALS.username,
+      role: STATIC_CREDENTIALS.role
+    }));
+
+    // Store token in localStorage
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify({
+      username: STATIC_CREDENTIALS.username,
+      role: STATIC_CREDENTIALS.role
+    }));
+
+    return {
+      success: true,
+      user: {
+        username: STATIC_CREDENTIALS.username,
+        role: STATIC_CREDENTIALS.role
+      }
+    };
+  }
+
+  throw new Error('Invalid credentials');
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+};
+
+export const getCurrentUser = () => {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+};
+
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('token');
+};
+
+export const isAdmin = () => {
+  const user = getCurrentUser();
+  return user?.role === 'admin';
 };

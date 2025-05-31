@@ -1,21 +1,56 @@
-
 import React from "react";
-import { Button } from "@mui/material"
+import { Button, styled, ButtonProps } from "@mui/material";
 
-const CustomButton = ({ type, id, name, label, handleClick }) => {
+const StyledButton = styled(Button)(({ theme }) => ({
+    minWidth: "120px",
+    height: "36px",
+    margin: "4px",
+    textTransform: "none",
+    borderRadius: "4px",
+    fontSize: "14px",
+    fontWeight: 500,
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    transition: "all 0.2s ease-in-out",
+    "&:hover": {
+        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        transform: "translateY(-1px)"
+    },
+    "&:active": {
+        transform: "translateY(0)",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+    }
+}));
+
+interface CustomButtonProps extends Omit<ButtonProps, 'variant' | 'color'> {
+    variant?: 'text' | 'contained' | 'outlined';
+    color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+    label: string;
+    handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+const CustomButton: React.FC<CustomButtonProps> = ({ 
+    type, 
+    id, 
+    name, 
+    label, 
+    handleClick, 
+    variant = "contained", 
+    color = "primary",
+    ...props 
+}) => {
     return (
-        <Button
+        <StyledButton
             id={id}
             name={name}
             type={type}
-            style={{ width: "150px", height:"40px", margin:"4px" }}
-            variant="contained"
+            variant={variant}
+            color={color}
             onClick={handleClick}
+            {...props}
         >
             {label}
-        </Button>
+        </StyledButton>
     );
 };
-
 
 export default CustomButton;

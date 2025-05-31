@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SelectedDataTableComponent from "./components/table/selected.slides.datatable";
+import CustomButton from "../../components/form-controls/buttons/customButton";
+import PptxGenJS from "pptxgenjs";
+import pptxHelper from "./components/helpers/pptxHelper";
 
 const columns = [
   { name: "_id", label: "_ID" },
@@ -23,18 +26,59 @@ const columns = [
 ];
 
 const SelectedSlideList = () => {
-  let slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
-  useEffect(() => {
-  }, []);
+  const navigate = useNavigate();
+  const slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
+
+  const handleCreatePptx = async () => {
+    if (slides.length === 0) {
+      console.error("No slides selected to create PDF.");
+      return;
+    }
+    try {
+      let pptx = new PptxGenJS();
+      await pptxHelper.createPptx(pptx, slides);
+      pptx.writeFile("selected_slides.pptx");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleBackToList = () => {
+    navigate('/slides/list');
+  };
 
   if (slides && slides.length > 0) {
     return (
-      <>
+      <div style={{ padding: '20px' }}>
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+          <CustomButton 
+            id="createPptx" 
+            name="createPptx" 
+            label="Create PPTX" 
+            handleClick={handleCreatePptx} 
+          />
+          <CustomButton 
+            id="backToList" 
+            name="backToList" 
+            label="Back to List" 
+            handleClick={handleBackToList} 
+          />
+        </div>
         <SelectedDataTableComponent data={slides} columns={columns} />
-      </>
+      </div>
     );
   } else {
-    return <div>No Slide Found</div>;
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>No Slides Selected</h2>
+        <CustomButton 
+          id="backToList" 
+          name="backToList" 
+          label="Back to List" 
+          handleClick={handleBackToList} 
+        />
+      </div>
+    );
   }
 };
 

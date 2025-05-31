@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSlideId } from "../../features/slides/slice/slideSlice";
-import PptxGenJS from "pptxgenjs";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/search.bar.component";
-import { getAllSlides, deleteSlide } from "../../services/apis/slideService";
+import { getAllSlides } from "../../services/apis/slideService";
 import SlidesDataTable from "../../features/slides/components/table/slides.mui.datatable";
-import pptxHelper from "../../features/slides/components/helpers/pptxHelper";
+import { showToastNotification } from "../../helpers/notificationsHepler";
 
 const columns = [
   { name: "_id", label: "_ID" },
@@ -28,82 +27,84 @@ const columns = [
 ];
 
 const SlideList = () => {
-  const [filterModel, setFilterModel] = useState({
-    items: [
-      {
-        columnField: "city",
-        operatorValue: "contains",
-        value: "John",
-      },
-    ],
-  });
-
-  const ROWS_PER_PAGE = 10;
-  const DEFAULT_SEARCH_TYPE = "_id";
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const [records, setRecords] = useState(null);
+  const [slides, setSlides] = useState([]);
   const [totalRows, setTotalRows] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(ROWS_PER_PAGE);
-  const [pageNo, setPageNo] = useState(0);
-  const [searchBy, setSearchBy] = useState(DEFAULT_SEARCH_TYPE);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchBy, setSearchBy] = useState("code");
   const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleFilterModelChange = (newModel) => {
-    if (JSON.stringify(newModel) !== JSON.stringify(filterModel)) {
-      console.log("filter modal", newModel);
-      setFilterModel(newModel);
+  const fetchSlides = async () => {
+    setLoading(true);
+    try {
+      console.log('Fetching slides...');
+      const response = await getAllSlides(rowsPerPage, page + 1, searchBy, searchText);
+      console.log('API Response:', response);
+      
+      if (response && response.data) {
+        console.log('Setting slides data:', response.data);
+        setSlides(response.data);
+        setTotalRows(response.totalRecords || response.data.length);
+      } else {
+        console.log('No data in response');
+        showToastNotification("error", "No data received from server");
+        setSlides([]);
+        setTotalRows(0);
+      }
+    } catch (error) {
+      console.error("Error fetching slides:", error);
+      showToastNotification("error", "Failed to fetch slides");
+      setSlides([]);
+      setTotalRows(0);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChangeSearchBy = (e) => {
-    setSearchBy(e.target.value);
-  };
-
-  const handleSearchChange = (event) => {
-    setSearchText(event.target.value);
-  };
-
-  const handleSearch = async () => {
-    setPageNo(0);
-    await getRecords();
-  };
-
-  const handleChangeRowsPerPage = async (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPageNo(0);
-    await getRecords();
-  };
-
-  const getRecords = async () => {
-    try {
-      let { result, status, message } = await getAllSlides(rowsPerPage, pageNo, searchBy, searchText);
-      setRecords(result.data);
-      setTotalRows(totalRecords);
-    } catch (error) {}
-  };
-
   useEffect(() => {
-    (async () => {
-      await getRecords();
-    })();
-  }, []);
+    fetchSlides();
+  }, [page, rowsPerPage, searchBy, searchText]);
 
-  if (records && records.length > 0) {
-    return (
-      <>
-        <SlidesDataTable data={records} columns={columns} />
-      </>
-    );
-  } else {
-    return (
-      <>
-        <SearchBar searchBy={searchBy} searchText={searchText} onChangeSearchBy={handleChangeSearchBy} onSearchChange={handleSearchChange} handleSearch={handleSearch} />
-      </>
-    );
-  }
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+    setPage(0);
+  };
+
+  const handleSearch = (searchBy, searchText) => {
+    setSearchBy(searchBy);
+    setSearchText(searchText);
+    setPage(0);
+  };
+
+  console.log('Current slides state:', slides);
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <SearchBar onSearch={handleSearch} />
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>
+      ) : slides && slides.length > 0 ? (
+        <SlidesDataTable
+          data={slides}
+          columns={columns}
+          totalRows={totalRows}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
+        />
+      ) : (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          {loading ? 'Loading...' : 'No data available'}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SlideList;

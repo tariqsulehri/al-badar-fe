@@ -1,13 +1,24 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import SelectedDataTableComponent from "./components/table/selected.slides.datatable";
+import { clearSlides } from "../../features/slides/slice/slidesForPptxSlice";
+import { setSlideId } from "../../features/slides/slice/slideSlice";
 import CustomButton from "../../components/form-controls/buttons/customButton";
-import PptxGenJS from "pptxgenjs";
+import DataTableComponent from "./components/table/selected.slides.datatable";
+import { getSlideById } from "../../services/apis/slideService";
 import pptxHelper from "./components/helpers/pptxHelper";
+import PptxGenJS from "pptxgenjs";
 
 const columns = [
-  { name: "_id", label: "_ID" },
+  { 
+    name: "_id", 
+    label: "_ID",
+    options: {
+      display: false,
+      filter: false,
+      sort: false
+    }
+  },
   { name: "provence", label: "Provence" },
   { name: "city", label: "City" },
   { name: "area", label: "Area" },
@@ -64,13 +75,28 @@ const SelectedSlideList = () => {
             handleClick={handleBackToList} 
           />
         </div>
-        <SelectedDataTableComponent data={slides} columns={columns} />
+        <DataTableComponent 
+          data={slides} 
+          columns={columns} 
+          options={{
+            setTableProps: () => ({
+              style: {
+                fontSize: '0.875rem' // Medium font size
+              }
+            }),
+            setRowProps: () => ({
+              style: {
+                fontSize: '0.875rem' // Medium font size
+              }
+            })
+          }}
+        />
       </div>
     );
   } else {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h2>No Slides Selected</h2>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Slides Selected</h2>
         <CustomButton 
           id="backToList" 
           name="backToList" 

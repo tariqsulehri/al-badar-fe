@@ -8,7 +8,15 @@ import SlidesDataTable from "../../features/slides/components/table/slides.mui.d
 import { showToastNotification } from "../../helpers/notificationsHepler";
 
 const columns = [
-  { name: "_id", label: "_ID" },
+  { 
+    name: "_id", 
+    label: "_ID",
+    options: {
+      display: false,
+      filter: false,
+      sort: false
+    }
+  },
   { name: "provence", label: "Provence" },
   { name: "city", label: "City" },
   { name: "area", label: "Area" },
@@ -38,7 +46,7 @@ const SlideList = () => {
   const fetchSlides = async () => {
     setLoading(true);
     try {
-      console.log('Fetching slides...');
+      console.log('Fetching slides with params:', { page: page + 1, rowsPerPage, searchBy, searchText });
       const response = await getAllSlides(rowsPerPage, page + 1, searchBy, searchText);
       console.log('API Response:', response);
       
@@ -67,12 +75,14 @@ const SlideList = () => {
   }, [page, rowsPerPage, searchBy, searchText]);
 
   const handlePageChange = (newPage) => {
+    console.log('Page changed to:', newPage);
     setPage(newPage);
   };
 
   const handleRowsPerPageChange = (newRowsPerPage) => {
+    console.log('Rows per page changed to:', newRowsPerPage);
     setRowsPerPage(newRowsPerPage);
-    setPage(0);
+    setPage(0); // Reset to first page when changing rows per page
   };
 
   const handleSearch = (searchBy, searchText) => {

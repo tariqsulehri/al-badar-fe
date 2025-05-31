@@ -8,7 +8,7 @@ import { getAllAreasForSelection } from "../../services/apis/config/areaService"
 import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
 import { suppliers, lights, category, mediaTypes, dimension, status } from "../../constant/data";
 import axios from "axios";
-import { createSlide, findSlideById, updateSlide } from "../../services/apis/slideService";
+import { createSlide, getSlideById, updateSlide } from "../../services/apis/slideService";
 
 const CreateSlide = () => {
   const id = useSelector((state) => state.slide.slideId || null);
@@ -92,7 +92,7 @@ const CreateSlide = () => {
     const fetchSlide = async () => {
       try {
         if (sid) {
-          const response = await findSlideById(sid);
+          const response = await getSlideById(sid);
           fillSlideObject(response.result || emptyObject);
         } else {
           setFormData(emptyObject); // Reset to empty when no ID

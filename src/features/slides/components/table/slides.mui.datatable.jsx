@@ -7,6 +7,34 @@ import { addSlide, clearSlides, setPagination } from "../../../../features/slide
 import { setSlideId } from "../../../../features/slides/slice/slideSlice";
 import pptxHelper from "../../components/helpers/pptxHelper";
 import PptxGenJS from "pptxgenjs";
+import { showToastNotification } from "../../../../helpers/notificationsHepler";
+
+const columns = [
+  { 
+    name: "_id", 
+    label: "_ID",
+    options: {
+      display: false,
+      filter: false,
+      sort: false
+    }
+  },
+  { name: "provence", label: "Provence" },
+  { name: "city", label: "City" },
+  { name: "area", label: "Area" },
+  { name: "supplier", label: "Supplier" },
+  { name: "mediaType", label: "Media" },
+  { name: "dimension", label: "Dimension" },
+  { name: "height_feets", label: "Height" },
+  { name: "width_feets", label: "Width" },
+  { name: "no_of_steamers", label: "Steamers" },
+  { name: "working_hrs_day", label: "Work-Hrs" },
+  { name: "lights", label: "Lights" },
+  { name: "supQuotedPrice", label: "SQ-Price" },
+  { name: "supDiscountedPrice", label: "SD-Price" },
+  { name: "finalPrice", label: "CF-Price" },
+  { name: "status", label: "Status" },
+];
 
 const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange }) => {
   const dispatch = useDispatch();
@@ -74,6 +102,7 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     page: page || 0,
     rowsPerPage: rowsPerPage || 10,
     rowsPerPageOptions: [10, 25, 50, 100],
+    serverSide: true, // Enable server-side pagination
     onRowClick: (rowData, rowMeta) => {
       const row = data[rowMeta.dataIndex];
       if (row && row._id) {
@@ -88,34 +117,59 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
       dispatch(addSlide(selectedData));
     },
     onChangePage: (newPage) => {
+      console.log('Table page changed to:', newPage);
       dispatch(setPagination({ page: newPage, rowsPerPage }));
       onPageChange(newPage);
     },
     onChangeRowsPerPage: (numberOfRows) => {
+      console.log('Table rows per page changed to:', numberOfRows);
       dispatch(setPagination({ page: 0, rowsPerPage: numberOfRows }));
       onRowsPerPageChange(numberOfRows);
     },
-    customToolbar: () => {
-      return (
-        <div style={{ display: 'flex', gap: '10px', padding: '8px' }}>
-          <CustomButton 
-            id="selectAll" 
-            name="selectAll" 
-            label="Select All" 
-            handleClick={() => {
-              const validData = data.filter(Boolean); // Remove any undefined/null values
-              dispatch(addSlide(validData));
-            }} 
-          />
-          <CustomButton 
-            id="clearSelection" 
-            name="clearSelection" 
-            label="Clear Selection" 
-            handleClick={() => dispatch(clearSlides())} 
-          />
-        </div>
-      );
+    textLabels: {
+      body: {
+        noMatch: "No matching records found",
+        toolTip: "Sort",
+        columnHeaderTooltip: column => `Sort for ${column.label}`
+      },
+      pagination: {
+        next: "Next Page",
+        previous: "Previous Page",
+        rowsPerPage: "Rows per page:",
+        displayRows: "of"
+      },
+      toolbar: {
+        search: "Search",
+        downloadCsv: "Download CSV",
+        print: "Print",
+        viewColumns: "View Columns",
+        filterTable: "Filter Table"
+      },
+      filter: {
+        all: "All",
+        title: "FILTERS",
+        reset: "RESET"
+      },
+      viewColumns: {
+        title: "Show Columns",
+        titleAria: "Show/Hide Table Columns"
+      },
+      selectedRows: {
+        text: "rows selected",
+        delete: "Delete",
+        deleteAria: "Delete Selected Rows"
+      }
     },
+    setTableProps: () => ({
+      style: {
+        fontSize: '0.875rem' // Medium font size
+      }
+    }),
+    setRowProps: () => ({
+      style: {
+        fontSize: '0.875rem' // Medium font size
+      }
+    })
   };
 
   const handleCreatePptx = async () => {
@@ -167,6 +221,25 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
           name="viewSelected" 
           label="View Selected" 
           handleClick={handleViewSelected} 
+        />
+        <CustomButton 
+          id="selectAll" 
+          name="selectAll" 
+          label="Select All" 
+          handleClick={() => {
+            const validData = data.filter(Boolean);
+            dispatch(addSlide(validData));
+            showToastNotification("success", "All slides selected successfully");
+          }} 
+        />
+        <CustomButton 
+          id="clearSelection" 
+          name="clearSelection" 
+          label="Clear Selection" 
+          handleClick={() => {
+            dispatch(clearSlides());
+            showToastNotification("success", "Selection cleared successfully");
+          }} 
         />
       </div>
       <MUIDataTable

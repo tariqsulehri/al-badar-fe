@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import SlideDetail from "../slides/components/cards/slideDetail.component";
 import ImageCard from "../slides/components/cards/imageCard.component";
 import { getAllProvencsForSelection } from "../../services/apis/config/provService";
@@ -9,16 +10,20 @@ import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaSe
 import { suppliers, lights, category, mediaTypes, dimension, status } from "../../constant/data";
 import axios from "axios";
 import { createSlide, getSlideById, updateSlide } from "../../services/apis/slideService";
+import CustomButton from "../../components/form-controls/buttons/customButton";
+import { showToastNotification } from "../../helpers/notificationsHepler";
 
 const CreateSlide = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const id = useSelector((state) => state.slide.slideId || null);
-  const [sid, setSid] = useState(null);
   const [provences, setProvences] = useState([]);
   const [cities, setCities] = useState([]);
   const [areas, setAreas] = useState([]);
   const [subAreas, setSubAreas] = useState([]);
-  const [formData, setFormData] = useState(null); // Initially null
-  const [image, setImage] =  useState(null);
+  const [formData, setFormData] = useState(null);
+  const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const emptyObject = {
     code: "",
@@ -59,157 +64,224 @@ const CreateSlide = () => {
 
   const fetchSelections = async () => {
     try {
+      console.log('Fetching selection data...');
       const provencesResp = await getAllProvencsForSelection();
       const citiesResp = await getAllCitiesForSelection();
       const areasResp = await getAllAreasForSelection();
       const subAreasResp = await getAllSubAreasForSelection();
+      
+      console.log('Selection data received:', {
+        provences: provencesResp,
+        cities: citiesResp,
+        areas: areasResp,
+        subAreas: subAreasResp
+      });
+
       setProvences(provencesResp);
       setCities(citiesResp);
       setAreas(areasResp);
       setSubAreas(subAreasResp);
+
     } catch (error) {
       console.error("Error fetching selection data:", error.message);
+      showToastNotification("error", "Failed to load selection data");
     }
   };
 
   const fillSlideObject = async (data) => {
     try {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        ...data, // Merge new data into current state
-      }));
+      console.log('Filling slide object with data:', data);
+      setFormData((prevFormData) => {
+        const newData = {
+          ...prevFormData,
+          ...data,
+        };
+        console.log('New form data:', newData);
+        return newData;
+      });
     } catch (error) {
       console.error("Error updating form data:", error.message);
+      showToastNotification("error", "Failed to load slide data");
     }
   };
 
   useEffect(() => {
+    console.log('Initial effect - Redux ID:', id);
     fetchSelections();
-    setSid(id?.payload || null);
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     const fetchSlide = async () => {
+      setIsLoading(true);
       try {
-        if (sid) {
-          const response = await getSlideById(sid);
-          fillSlideObject(response.result || emptyObject);
+
+        let slideId = id?.payload;
+        // console.log('Fetching slide with Redux ID:', slideId);
+
+        if (slideId) {
+          const slideData = await getSlideById(slideId);
+          console.log('Fetching slide with Redux ID:', slideData);
+      
+          if (slideData) {
+            fillSlideObject(slideData);
+          } else {
+            console.warn('No result data in response:', slideData);
+            fillSlideObject(emptyObject);
+          }
         } else {
-          setFormData(emptyObject); // Reset to empty when no ID
+          console.log('No slide ID in Redux, setting empty form');
+          setFormData(emptyObject);
         }
       } catch (error) {
         console.error("Error fetching slide:", error.message);
+        showToastNotification("error", "Failed to fetch slide details");
+        setFormData(emptyObject);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchSlide();
-  }, [sid]);
+  }, [id]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const newData = { ...formData, [e.target.name]: e.target.value };
+    console.log('Form field changed:', e.target.name, 'New value:', e.target.value);
+    setFormData(newData);
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      if (!id) {
-        await createSlide(formData);
+      console.log('Submitting form data:', formData);
+      if (!id?.payload) {
+        const response = await createSlide(formData);
+        console.log('Create slide response:', response);
+        showToastNotification("success", "Slide created successfully");
       } else {
-        await updateSlide(id, formData);
+        const response = await updateSlide(id.payload, formData);
+        console.log('Update slide response:', response);
+        showToastNotification("success", "Slide updated successfully");
       }
+      navigate('/slides/list');
     } catch (error) {
       console.error("Error submitting form:", error.message);
+      showToastNotification("error", "Failed to save slide");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleRefresh = () => {
+    console.log('Refreshing form data');
     setFormData({ ...emptyObject });
+    showToastNotification("info", "Form reset to empty state");
+  };
+
+  const handleBack = () => {
+    navigate('/slides/list');
   };
 
   const handleImageUpload = async (e) => {
     try {
-      // Check if a file is selected
       const file = e.target.files?.[0];
       if (!file) {
-        console.log("Please select a file.");
+        showToastNotification("warning", "Please select a file");
         return;
       }
   
-      // Validate file type (e.g., only allow images)
       const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validImageTypes.includes(file.type)) {
-        console.log("Please upload a valid image file (JPEG, PNG, GIF).");
+        showToastNotification("error", "Please upload a valid image file (JPEG, PNG, GIF)");
         return;
       }
   
-      // Prepare the file for upload
       const fileFormData = new FormData();
       fileFormData.append("image", file);
   
-      // Make API request to upload the image
+      console.log('Uploading image...');
       const result = await axios.post(
-        "http://localhost:3500/api/slide/upload",
+        "http://localhost:3500/api/slides/upload",
         fileFormData,
         {
           headers: { "Content-Type": "multipart/form-data", "x-auth-token":"token" },
         }
       );
   
-      // Check if the response contains the uploaded file data
+      console.log('Image upload response:', result.data);
       if (result.data?.file) {
         setFormData((prevData) => ({
           ...prevData,
           image: result.data.file,
         }));
+        showToastNotification("success", "Image uploaded successfully");
       } else {
-        console.error("Image upload failed. No file data in response.");
+        showToastNotification("error", "Image upload failed");
       }
     } catch (error) {
-      // Log error message
       console.error("Error uploading image:", error?.response?.data?.message || error.message);
+      showToastNotification("error", "Failed to upload image");
     }
   };
-  
 
   const handleChangeSelect = (event, values, controlName) => {
+    console.log('Select changed:', controlName, 'New value:', values);
     setFormData((prevData) => ({ ...prevData, [controlName]: values.label }));
   };
 
   return (
     <>
-      <div style={{ margin: "2em", textAlign: "center" }}>
-        <h1>Slide Management</h1>
+      <div style={{ margin: "1em", textAlign: "center" }}>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+          {id?.payload ? 'Edit Slide' : 'Create New Slide'}
+        </h1>
       </div>
 
-      {formData ? (
+      {isLoading ? (
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <p>Loading...</p>
+        </div>
+      ) : formData ? (
         <div
           style={{
             margin: "0 1%",
             display: "grid",
             gridTemplateColumns: "60% 40%",
             padding: "0.5em",
+            gap: "1rem"
           }}
         >
-          <SlideDetail
-            formData={formData}
-            suppliers={suppliers}
-            provences={provences}
-            cities={cities}
-            areas={areas}
-            subAreas={subAreas}
-            lights={lights}
-            category={category}
-            mediaTypes={mediaTypes}
-            dimension={dimension}
-            status={status}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            handleRefresh={handleRefresh}
-            handleChangeSelect={handleChangeSelect}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+              <CustomButton 
+                id="back" 
+                name="back" 
+                label="Back to List" 
+                handleClick={handleBack} 
+              />
+            </div>
+            <SlideDetail
+              formData={formData}
+              suppliers={suppliers}
+              provences={provences}
+              cities={cities}
+              areas={areas}
+              subAreas={subAreas}
+              lights={lights}
+              category={category}
+              mediaTypes={mediaTypes}
+              dimension={dimension}
+              status={status}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              handleRefresh={handleRefresh}
+              handleChangeSelect={handleChangeSelect}
+            />
+          </div>
           <ImageCard previewImage={formData.image} handleImageUpload={handleImageUpload} />
         </div>
       ) : (
-        <div style={{ textAlign: "center" }}>
-          <p>Loading form data...</p>
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <p>No data available</p>
         </div>
       )}
     </>

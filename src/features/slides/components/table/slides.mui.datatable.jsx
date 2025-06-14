@@ -93,7 +93,8 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
   const options = {
     filterType: "dropdown",
     selectableRows: "multiple",
-    search: false, // Disable built-in search as we have our own
+    search: true,
+    searchOpen: true,
     selectableRowsOnClick: false,
     selectableRowsHideCheckboxes: false,
     rowsSelected: getSelectedRowIndexes(),
@@ -102,7 +103,7 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     page: page || 0,
     rowsPerPage: rowsPerPage || 10,
     rowsPerPageOptions: [10, 25, 50, 100],
-    serverSide: true, // Enable server-side pagination
+    serverSide: true,
     onRowClick: (rowData, rowMeta) => {
       const row = data[rowMeta.dataIndex];
       if (row && row._id) {
@@ -113,7 +114,7 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
       const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
       const selectedData = selectedIndexes
         .map((index) => data[index])
-        .filter(Boolean); // Remove any undefined/null values
+        .filter(Boolean);
       dispatch(addSlide(selectedData));
     },
     onChangePage: (newPage) => {
@@ -162,14 +163,40 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     },
     setTableProps: () => ({
       style: {
-        fontSize: '0.875rem' // Medium font size
+        fontSize: '0.8125rem',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
       }
     }),
     setRowProps: () => ({
       style: {
-        fontSize: '0.875rem' // Medium font size
+        fontSize: '0.8125rem',
+        height: '32px',
+        padding: '4px 8px'
       }
-    })
+    }),
+    setHeaderProps: () => ({
+      style: {
+        fontSize: '0.8125rem',
+        fontWeight: 600,
+        height: '40px',
+        padding: '4px 8px'
+      }
+    }),
+    responsive: 'standard',
+    tableBodyHeight: 'auto',
+    tableBodyMaxHeight: 'calc(100vh - 200px)',
+    fixedHeader: true,
+    elevation: 0,
+    downloadOptions: {
+      filename: 'slides.csv',
+      separator: ',',
+    },
+    print: true,
+    viewColumns: true,
+    filter: true,
+    customToolbarSelect: () => {
+      return null; // Disable the default selection toolbar
+    }
   };
 
   const handleCreatePptx = async () => {
@@ -208,8 +235,17 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+    <div style={{ 
+      padding: '12px', // Reduced padding
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px' // Reduced gap between elements
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        gap: '8px', // Reduced gap between buttons
+        flexWrap: 'wrap' // Allow buttons to wrap on smaller screens
+      }}>
         <CustomButton 
           id="createPdf" 
           name="createPdf" 

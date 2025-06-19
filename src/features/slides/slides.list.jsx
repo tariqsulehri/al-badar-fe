@@ -89,6 +89,9 @@ const SlideList = () => {
     setSearchBy(searchBy);
     setSearchText(searchText);
     setPage(0);
+    if(searchBy !== "" || searchText !== ""){
+       fetchSlides();
+    }
   };
 
   console.log('Current slides state:', slides);

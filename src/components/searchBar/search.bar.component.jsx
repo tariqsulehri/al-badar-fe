@@ -10,11 +10,6 @@ const SearchBar = ({ onSearch }) => {
     onSearch(searchBy, searchText);
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
 
   return (
     <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
@@ -39,7 +34,6 @@ const SearchBar = ({ onSearch }) => {
         variant="outlined"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        onKeyPress={handleKeyPress}
       />
 
       <Button

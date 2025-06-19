@@ -8,65 +8,86 @@
     flex-wrap: wrap;
   }
   
-  /* FormControl for Select dropdown */
+  /* SELECT: wrapper */
   .search-select-form {
     min-width: 160px;
     max-width: 160px;
   }
   
-  /* Select dropdown styling */
+  /* SELECT: dropdown appearance */
   .search-select {
-    font-size: 1rem;
+    font-size: 0.95rem;
     text-transform: capitalize;
-    padding: 0;
   }
   
-  /* Ensure internal select input has consistent height and alignment */
+  /* SELECT: internal select styling */
   .search-select .MuiSelect-select {
     height: 40px;
+    padding: 8px 12px;
     display: flex;
     align-items: center;
-    padding: 8px 12px;
     box-sizing: border-box;
   }
   
-  /* TextField styling */
+  /* TEXTFIELD: wrapper */
   .search-input {
     flex: 1;
     min-width: 180px;
     max-width: 100%;
-    transition: all 0.3s ease;
   }
   
-  /* Inner input of TextField */
+  /* TEXTFIELD: input styling */
   .search-input input {
-    font-size: 1rem;
-    text-transform: capitalize;
+    height: 40px;
+    font-size: 0.95rem;
     padding: 8px 12px;
+    box-sizing: border-box;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
   }
   
-  /* Button styling */
+  /* TEXTFIELD: label */
+  .search-input .MuiInputLabel-root {
+    font-size: 0.95rem;
+    top: 50%;
+    transform: translate(14px, -50%) scale(1);
+    transition: all 0.2s ease;
+  }
+  
+  /* TEXTFIELD: label when shrunk */
+  .search-input .MuiInputLabel-shrink {
+    top: 0;
+    transform: translate(14px, -9px) scale(0.85);
+    font-size: 0.9rem;
+  }
+  
+  /* BUTTONS: Search / Refresh */
   .search-btn {
-    height: 40px !important;
+    height: 33px !important;
     min-width: 110px;
-    text-transform: none !important;
+    font-size: 0.95rem;
     font-weight: 600 !important;
+    text-transform: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box;
+    line-height: 1;
   }
   
-  /* Button hover effect */
+  /* BUTTON hover effect */
   .search-btn:hover {
     transform: scale(1.03);
     background-color: #1976d2;
   }
   
-  /* Dropdown menu items (Select options) */
+  /* DROPDOWN items */
   .MuiMenuItem-root {
-    font-size: 1rem;
+    font-size: 0.95rem;
     text-transform: capitalize;
   }
   

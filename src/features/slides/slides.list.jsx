@@ -46,9 +46,7 @@ const SlideList = () => {
   const fetchSlides = async () => {
     setLoading(true);
     try {
-      console.log('Fetching slides with params:', { page: page + 1, rowsPerPage, searchBy, searchText });
       const response = await getAllSlides(rowsPerPage, page + 1, searchBy, searchText);
-      console.log('API Response:', response);
       
       if (response && response.data) {
         console.log('Setting slides data:', response.data);
@@ -90,7 +88,7 @@ const SlideList = () => {
     setSearchText(searchText);
     setPage(0);
     if(searchBy !== "" || searchText !== ""){
-       fetchSlides();
+       fetchSlides(searchBy, searchText);
     }
   };
 

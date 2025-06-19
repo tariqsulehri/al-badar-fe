@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const SearchBar = ({ onSearch }) => {
   const [searchBy, setSearchBy] = useState('code');
@@ -10,6 +11,11 @@ const SearchBar = ({ onSearch }) => {
     onSearch(searchBy, searchText);
   };
 
+  const handleRefresh = () => {
+    setSearchBy('code');
+    setSearchText('');
+    onSearch('code', '');
+  };
 
   return (
     <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
@@ -43,6 +49,15 @@ const SearchBar = ({ onSearch }) => {
         sx={{ height: 56 }}
       >
         Search
+      </Button>
+
+      <Button
+        variant="outlined"
+        startIcon={<RefreshIcon />}
+        onClick={handleRefresh}
+        sx={{ height: 56 }}
+      >
+        Refresh
       </Button>
     </Box>
   );

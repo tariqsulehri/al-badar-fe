@@ -15,15 +15,13 @@ const columns = [
     label: "_ID",
     options: {
       display: false,
-      filter: false,
-      sort: false
     }
   },
-  { name: "provence", label: "Provence" },
-  { name: "city", label: "City" },
-  { name: "area", label: "Area" },
-  { name: "supplier", label: "Supplier" },
-  { name: "mediaType", label: "Media" },
+  { name: "provence", label: "Provence", options: { filter: true, sort: true } },
+  { name: "city", label: "City", options: { filter: true, sort: true } },
+  { name: "area", label: "Area", options: { filter: true, sort: true } },
+  { name: "supplier", label: "Supplier", options: { filter: true, sort: true } },
+  { name: "mediaType", label: "Media", options: { filter: true, sort: true } },
   { name: "dimension", label: "Dimension" },
   { name: "height_feets", label: "Height" },
   { name: "width_feets", label: "Width" },
@@ -33,10 +31,10 @@ const columns = [
   { name: "supQuotedPrice", label: "SQ-Price" },
   { name: "supDiscountedPrice", label: "SD-Price" },
   { name: "finalPrice", label: "CF-Price" },
-  { name: "status", label: "Status" },
+  { name: "status", label: "Status", options: { filter: true, sort: true } },
 ];
 
-const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange }) => {
+const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange, setSearchBy, setSearchText, setPage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const selectedSlides = useSelector((state) => state.slidesForPptx.slidesForPptx);
@@ -93,8 +91,8 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
   const options = {
     filterType: "dropdown",
     selectableRows: "multiple",
-    search: true,
-    searchOpen: true,
+    // search: true,
+    // searchOpen: true,
     selectableRowsOnClick: false,
     selectableRowsHideCheckboxes: false,
     rowsSelected: getSelectedRowIndexes(),
@@ -196,7 +194,13 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     filter: true,
     customToolbarSelect: () => {
       return null; // Disable the default selection toolbar
-    }
+    },
+    onSearchChange: (searchText) => {
+      // For now, always search by 'code'.
+      if (typeof setSearchBy === 'function') setSearchBy('code');
+      if (typeof setSearchText === 'function') setSearchText(searchText);
+      if (typeof setPage === 'function') setPage(0);
+    },
   };
 
   const handleCreatePptx = async () => {
@@ -232,6 +236,12 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleSearch = (searchBy, searchText) => {
+    setSearchBy(searchBy);
+    setSearchText(searchText);
+    setPage(0);
   };
 
   return (
@@ -280,7 +290,7 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
       </div>
       <MUIDataTable
         title="Slides List"
-        data={transformedData}
+        data={data}
         columns={columns}
         options={options}
       />

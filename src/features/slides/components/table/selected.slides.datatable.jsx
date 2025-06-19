@@ -4,19 +4,38 @@ import { useDispatch } from "react-redux";
 import { addSlide, removeSlide } from "../../slice/slidesForPptxSlice";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../../../helpers/notificationsHepler";
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const SelectedDataTableComponent = ({data, columns}) => {
   const dispatch = useDispatch();
 
   // Transform data to match column order
-  const transformedData = data.map(row => {
-    return columns.map(col => row[col.name] || '');
+  const transformedData = data.map((row, idx) => {
+    // Add a remove button at the end of each row
+    const rowData = columns.map(col => row[col.name] || '');
+    rowData.push(
+      <IconButton
+        aria-label="remove"
+        color="error"
+        size="small"
+        onClick={e => {
+          e.stopPropagation();
+          dispatch(removeSlide(row));
+          showToastNotification("success", "Slide removed from selection");
+        }}
+      >
+        <DeleteIcon fontSize="small" />
+      </IconButton>
+    );
+    return rowData;
   });
 
-  const handleRemoveSlide = (index) => {
-    dispatch(removeSlide(data[index]));
-    showToastNotification("success", "Slide removed from selection");
-  };
+  // Add a column for the remove button
+  const columnsWithRemove = [
+    ...columns,
+    { name: "remove", label: "Remove", options: { filter: false, sort: false, searchable: false } }
+  ];
 
   // Custom options for the table
   const options = {
@@ -45,6 +64,28 @@ const SelectedDataTableComponent = ({data, columns}) => {
     },
     onRowClick: (rowData, rowMeta) => {
       handleRemoveSlide(rowMeta.dataIndex);
+    },
+    onRowSelectionChange: (currentRowsSelected, allRowsSelected, rowsSelected) => {
+      // Get the indexes of selected rows
+      const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
+      const selectedData = selectedIndexes.map((index) => data[index]).filter(Boolean);
+
+      // Find which slides are newly selected and which are deselected
+      const selectedIds = new Set(selectedData.map(slide => slide._id));
+      const prevSelectedIds = new Set(Object.keys(selectedSlideIds).filter(id => selectedSlideIds[id]));
+
+      // Slides to remove: previously selected but not in current selection
+      const toRemove = [...prevSelectedIds].filter(id => !selectedIds.has(id));
+      // Slides to add: currently selected but not previously selected
+      const toAdd = selectedData.filter(slide => !prevSelectedIds.has(slide._id));
+
+      toRemove.forEach(id => {
+        const slide = data.find(s => s._id === id);
+        if (slide) dispatch(removeSlide(slide));
+      });
+      if (toAdd.length > 0) {
+        dispatch(addSlide(toAdd));
+      }
     },
     textLabels: {
       body: {
@@ -120,7 +161,7 @@ const SelectedDataTableComponent = ({data, columns}) => {
       <MUIDataTable
         title="Selected Slides"
         data={transformedData}
-        columns={columns}
+        columns={columnsWithRemove}
         options={options}
       />
     </div>

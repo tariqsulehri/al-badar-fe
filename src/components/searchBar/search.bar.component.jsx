@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Select, MenuItem, FormControl, InputLabel, Button, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import "./search.bar.css";
 
 const SearchBar = ({ onSearch }) => {
   const [searchBy, setSearchBy] = useState('code');
@@ -18,15 +19,15 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
-      <FormControl sx={{ minWidth: 120 }} size="small">
+    <Box className="search-bar-row">
+      <FormControl className="search-select-form" size="small">
         <InputLabel>Search By</InputLabel>
         <Select
           value={searchBy}
           label="Search By"
           onChange={(e) => setSearchBy(e.target.value)}
           size="small"
-          sx={{ minHeight: 40 }}
+          className="search-select"
         >
           <MenuItem value="code">Code</MenuItem>
           <MenuItem value="city">City</MenuItem>
@@ -37,13 +38,12 @@ const SearchBar = ({ onSearch }) => {
       </FormControl>
 
       <TextField
-        fullWidth
+        className="search-input"
         label="Search"
         variant="outlined"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         size="small"
-        sx={{ minHeight: 40 }}
       />
 
       <Button
@@ -51,7 +51,7 @@ const SearchBar = ({ onSearch }) => {
         color="primary"
         startIcon={<SearchIcon />}
         onClick={handleSearch}
-        sx={{ height: 40, minWidth: 110, textTransform: 'none', fontWeight: 600 }}
+        className="search-btn"
       >
         Search
       </Button>
@@ -61,7 +61,7 @@ const SearchBar = ({ onSearch }) => {
         color="primary"
         startIcon={<RefreshIcon />}
         onClick={handleRefresh}
-        sx={{ height: 40, minWidth: 110, textTransform: 'none', fontWeight: 600 }}
+        className="search-btn"
       >
         Refresh
       </Button>

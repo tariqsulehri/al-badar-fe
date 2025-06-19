@@ -1,36 +1,152 @@
-/* Reduce row height by minimizing padding */
-.MuiTableCell-root {
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+/* ===== Page Wrapper ===== */
+.page-wrapper {
+    padding: 16px;
+    background-color: #f8f9fa;
+  }
+  
+  /* ===== Table Header ===== */
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    background-color: #f5f5f5;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+  
+  .searchWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .searchInput {
+    width: 300px;
+  }
+  
+  /* ===== Table Head Styling ===== */
+  .MuiTableHead-root {
+    background-color: #e3f2fd !important;
+  }
+  
+  .MuiTableCell-head {
+    padding: 6px 12px !important;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #1565c0;
+    background-color: #e3f2fd !important;
+    border-bottom: 1px solid #cfd8dc;
+  }
+  
+  /* ===== Table Body Styling ===== */
+  .MuiTableCell-root {
+    padding: 4px 12px !important;
     font-size: 0.78rem;
     line-height: 1.2;
+    vertical-align: middle;
   }
   
-  /* Reduce header cell padding too */
-  .MuiTableCell-head {
+  .MuiTableRow-root {
+    height: 36px !important;
+  }
+  
+  .MuiTableBody-root .MuiTableRow-root:hover {
+    background-color: #f9f9f9 !important;
+  }
+  
+  /* ===== Pagination Styling ===== */
+  .MuiTablePagination-root {
+    background-color: #f5f5f5 !important;
+    border-top: 1px solid #ddd;
+    padding: 0 !important;
+  }
+  
+  /* Pagination toolbar container */
+  .MuiTablePagination-toolbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 0 16px !important;
+    box-sizing: border-box;
+    gap: 8px;
+  }
+  
+  /* Align rows-per-page label */
+  .MuiTablePagination-selectLabel {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    height: 40px;
+    font-size: 0.8rem;
+  }
+  
+  /* Align displayed rows text */
+  .MuiTablePagination-displayedRows {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    height: 40px;
+    font-size: 0.8rem;
+  }
+  
+  /* Rows-per-page dropdown wrapper */
+  .MuiTablePagination-input {
+    display: flex !important;
+    align-items: center !important;
+    height: 40px;
+    padding: 0 8px !important;
+  }
+  
+  /* Dropdown control styles */
+  .MuiNativeSelect-root,
+  .MuiInputBase-root {
+    font-size: 0.8rem !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 4px 8px !important;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+  
+  /* Select element itself */
+  .MuiSelect-select {
     padding-top: 6px !important;
     padding-bottom: 6px !important;
+    display: flex;
+    align-items: center;
   }
   
-  /* Tighten row spacing overall */
-  .MuiTableRow-root {
-    height: 36px; /* Optional: Enforce row height */
+  /* Pagination arrow buttons */
+  .MuiTablePagination-actions {
+    display: flex !important;
+    align-items: center !important;
+    height: 40px;
   }
   
-  /* Optional: if using responsive 'standard', ensure no extra padding gets added in MUI defaults */
-  .MuiTableBody-root .MuiTableRow-root:hover {
-    background-color: #f9f9f9;
+  /* Optional: zebra-striping */
+  .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
+    background-color: #fcfcfc;
   }
   
-  .table-header-wrapper .header-row, .MuiTableHead-root .MuiTableCell-head {
-    background-color: #e3f2fd !important; /* Light blue for header */
-    color: #1565c0 !important; /* Dark blue text for contrast */
+  /* Optional: smaller icon buttons */
+  .MuiIconButton-root {
+    padding: 4px !important;
   }
   
-  .MuiTablePagination-root {
-    background-color: #f5f5f5 !important; /* Subtle gray for pagination */
-    border-top: 1px solid #e0e0e0;
+  /* Optional: consistent buttons styling */
+  .MuiButtonBase-root.custom-icon-button {
+    border: 1px solid #757575;
+  }
+  .MuiButtonBase-root.custom-icon-button:first-child {
+    margin-right: 8px;
+  }
+  .MuiButtonBase-root.custom-icon-button svg {
+    font-size: 16px;
   }
   

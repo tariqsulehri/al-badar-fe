@@ -9,6 +9,8 @@ import pptxHelper from "../../components/helpers/pptxHelper";
 import PptxGenJS from "pptxgenjs";
 import { showToastNotification } from "../../../../helpers/notificationsHepler";
 
+import "./slide.table.css";
+
 const columns = [
   { 
     name: "_id", 

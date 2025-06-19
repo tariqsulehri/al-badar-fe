@@ -6,6 +6,7 @@ import CustomButton from "../../../../components/form-controls/buttons/customBut
 import { showToastNotification } from "../../../../helpers/notificationsHepler";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import "./slide.table.css";
 
 const SelectedDataTableComponent = ({data, columns}) => {
   const dispatch = useDispatch();

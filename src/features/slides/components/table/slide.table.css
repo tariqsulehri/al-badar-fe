@@ -1,96 +1,36 @@
-/* General Table Header Alignment */
-.table-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Align vertically with pagination/search */
-    margin-bottom: 16px;
+/* Reduce row height by minimizing padding */
+.MuiTableCell-root {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    font-size: 0.78rem;
+    line-height: 1.2;
   }
   
-  .searchInput {
-    width: 300px;
+  /* Reduce header cell padding too */
+  .MuiTableCell-head {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
   }
   
-  .table-header-wrapper .header-row {
-    padding: 8px 16px;
-    background-color: #e9e9ea;
+  /* Tighten row spacing overall */
+  .MuiTableRow-root {
+    height: 36px; /* Optional: Enforce row height */
   }
   
-  /* MUI DataTable Body Cell Padding */
-  .table-body-style tr td {
-    padding: 6px 16px;
+  /* Optional: if using responsive 'standard', ensure no extra padding gets added in MUI defaults */
+  .MuiTableBody-root .MuiTableRow-root:hover {
+    background-color: #f9f9f9;
   }
   
-  /* Page Wrapper */
-  .page-wrapper {
-    padding: 16px;
+  .table-header-wrapper .header-row, .MuiTableHead-root .MuiTableCell-head {
+    background-color: #e3f2fd !important; /* Light blue for header */
+    color: #1565c0 !important; /* Dark blue text for contrast */
   }
   
-  /* Clear MUI Switch Margin */
-  .MuiSwitch-root {
-    margin: 0 !important;
-  }
-  
-  /* Custom Icon Buttons */
-  .MuiButtonBase-root.custom-icon-button {
-    border: 1px solid #757575;
-  }
-  .MuiButtonBase-root.custom-icon-button:first-child {
-    margin-right: 8px;
-  }
-  .MuiButtonBase-root.custom-icon-button svg {
-    font-size: 16px;
-  }
-  
-  /* Pagination Bar Alignment Fix */
   .MuiTablePagination-root {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end;
-    padding: 8px 16px !important;
-    margin: 0 !important;
-    min-height: auto !important;
-    gap: 8px;
-  }
-  
-  /* Pagination Toolbar Internal Items */
-  .MuiTablePagination-toolbar {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px;
-    min-height: 48px !important;
-  }
-  
-  /* Align Pagination Labels and Inputs */
-  .MuiTablePagination-selectLabel .p {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    height: 100%;
-  }
-
-  .MuiTablePagination-displayedRows,
-  .css-pdct74-MuiTablePagination-selectLabel,
-  .MuiTablePagination-input,
-  .MuiTablePagination-actions {
-    display: flex;
-    align-items: center;
-    margin: 0 !important;
-    height: 100%;
-    padding: 0 !important;
-  }
-  
-  /* Consistent Height for Inputs */
-  .MuiTablePagination-input {
-    height: 36px !important;
-  }
-  
-  /* Optional: Align Search with Pagination if used side by side */
-  .searchWrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    background-color: #f5f5f5 !important; /* Subtle gray for pagination */
+    border-top: 1px solid #e0e0e0;
   }
   

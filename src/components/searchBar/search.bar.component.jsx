@@ -19,12 +19,14 @@ const SearchBar = ({ onSearch }) => {
 
   return (
     <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
-      <FormControl sx={{ minWidth: 120 }}>
+      <FormControl sx={{ minWidth: 120 }} size="small">
         <InputLabel>Search By</InputLabel>
         <Select
           value={searchBy}
           label="Search By"
           onChange={(e) => setSearchBy(e.target.value)}
+          size="small"
+          sx={{ minHeight: 40 }}
         >
           <MenuItem value="code">Code</MenuItem>
           <MenuItem value="city">City</MenuItem>
@@ -40,22 +42,26 @@ const SearchBar = ({ onSearch }) => {
         variant="outlined"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
+        size="small"
+        sx={{ minHeight: 40 }}
       />
 
       <Button
         variant="contained"
+        color="primary"
         startIcon={<SearchIcon />}
         onClick={handleSearch}
-        sx={{ height: 56 }}
+        sx={{ height: 40, minWidth: 110, textTransform: 'none', fontWeight: 600 }}
       >
         Search
       </Button>
 
       <Button
-        variant="outlined"
+        variant="contained"
+        color="primary"
         startIcon={<RefreshIcon />}
         onClick={handleRefresh}
-        sx={{ height: 56 }}
+        sx={{ height: 40, minWidth: 110, textTransform: 'none', fontWeight: 600 }}
       >
         Refresh
       </Button>

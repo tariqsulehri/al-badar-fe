@@ -38,7 +38,7 @@ const SlideList = () => {
   const [slides, setSlides] = useState([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchBy, setSearchBy] = useState("code");
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);

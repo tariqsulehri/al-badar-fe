@@ -99,8 +99,8 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     pagination: true,
     count: totalRows || 0,
     page: page || 0,
-    rowsPerPage: rowsPerPage || 10,
-    rowsPerPageOptions: [10, 25, 50, 100],
+    rowsPerPage: rowsPerPage || 5,
+    rowsPerPageOptions: [5, 10, 25, 50, 100],
     serverSide: true,
     onRowClick: (rowData, rowMeta) => {
       const row = data[rowMeta.dataIndex];
@@ -168,8 +168,8 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
     setRowProps: () => ({
       style: {
         fontSize: '0.8125rem',
-        height: '32px',
-        padding: '4px 8px'
+        height: '28px',
+        padding: '2px 4px'
       }
     }),
     setHeaderProps: () => ({
@@ -177,7 +177,7 @@ const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, 
         fontSize: '0.8125rem',
         fontWeight: 600,
         height: '40px',
-        padding: '4px 8px'
+        padding: '2px 4px'
       }
     }),
     responsive: 'standard',

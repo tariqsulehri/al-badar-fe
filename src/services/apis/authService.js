@@ -8,10 +8,10 @@ const STATIC_CREDENTIALS = {
   role: 'admin'
 };
 
-export const login = async (username, password) => {
+export const login = async ({username, password}) => {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
+  // await new Promise(resolve => setTimeout(resolve, 500));
+try {
   if (username === STATIC_CREDENTIALS.username && password === STATIC_CREDENTIALS.password) {
     // Create a simple token with user info
     const token = btoa(JSON.stringify({
@@ -28,14 +28,16 @@ export const login = async (username, password) => {
 
     return {
       success: true,
-      user: {
         username: STATIC_CREDENTIALS.username,
         role: STATIC_CREDENTIALS.role
-      }
     };
   }
-
+} catch (error) {
   throw new Error('Invalid credentials');
+}
+  
+
+  
 };
 
 export const logout = () => {

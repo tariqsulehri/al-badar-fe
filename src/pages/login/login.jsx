@@ -33,21 +33,20 @@ const Login = () => {
   };
 
   const handleSubmit = async ({ username, password }) => {
-    const loggedUser = await login({ username, password });
-    if (loggedUser.username && loggedUser.password) {
-      loginSuccess(loggedUser.username);
-    } else {
-      createNotification("error", "invalid credentials");
+    try {
+      const loggedUser = await login({ username, password });
+      if (loggedUser.username) {
+        loginSuccess(loggedUser.username);
+      } else {
+        createNotification("error", "invalid credentials");
+      }
+
+    } catch (error) {
+      console.log("Error", error.message)
     }
+
   };
 
-  const handleSocialLogin = async (username) => {
-    if (username) {
-      loginSuccess(username);
-    } else {
-      createNotification("error", "invalid credentials");
-    }
-  };
 
   return (
     <div className="p-5 d-flex justify-content-center align-items-center">

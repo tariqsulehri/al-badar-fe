@@ -1,6 +1,4 @@
 import React from "react";
-import "./text.field.formik";
-import PropTyes from "prop-types";
 
 export const TextFieldFormik = ({
   name,
@@ -14,7 +12,7 @@ export const TextFieldFormik = ({
   placeholder,
   type = "text",
   label,
-  labelClassName,
+  labelClassName = "labelfield",
   warpperClassName,
   className = "form-control",
   errorClassName = "formik_error",
@@ -27,6 +25,7 @@ export const TextFieldFormik = ({
           {label}
         </label>
       )}
+
       <input
         type={type}
         className={className}
@@ -40,28 +39,7 @@ export const TextFieldFormik = ({
         autoComplete={autoComplete}
       />
 
-      {errors[name] && touched[name] && (
-        <p className={errorClassName}>
-          {errors[name] && touched[name] && errors[name]}
-        </p>
-      )}
+      {errors[name] && touched[name] && <p className={errorClassName}>{errors[name]}</p>}
     </div>
   );
 };
-// TextFieldFormik.propTypes = {
-//   name: PropTyes.string.isRequired,
-//   id: PropTyes.string,
-//   values: PropTyes.object,
-//   onBlur: PropTyes.func,
-//   error: PropTyes.object,
-//   touched: PropTyes.object,
-//   disabled: PropTyes.bool,
-//   placeholder: PropTyes.string,
-//   type: PropTyes.string,
-//   label: PropTyes.string,
-//   labelClassName: PropTyes.string,
-//   warpperClassName: PropTyes.string,
-//   className: PropTyes.string,
-//   errorClassName: PropTyes.string,
-//   autoComplete: PropTyes.string,
-// };

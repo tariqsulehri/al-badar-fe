@@ -1,37 +1,34 @@
-// Navbar.js
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MenuIcon from "@mui/icons-material/Menu";
 import Button from "@mui/material/Button";
-
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../features/auth/slice/authSlice";
 import SlideMenu from "./menu.slides";
 import SetupMenu from "./menu.setup";
-import UserMenu from "./menu.users";
-
+import UserMenu from "./nav.users";
 import "./nav.css";
-import { Slide } from "react-toastify";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.currentUser);
   const [anchorSetupEl, setAnchorSetupEl] = useState(null);
-  const [anchorSlidesgEl, setAnchorSlidesEl] = useState(null);
+  const [anchorSlidesEl, setAnchorSlidesEl] = useState(null);
   const [anchorUserEl, setAnchorUserEl] = useState(null);
 
-  const handleSetupMenuClick = (event) => {
-    setAnchorSetupEl(event.currentTarget);
-  };
-
-  const handleSlideMenuClick = (event) => {
-    setAnchorSlidesEl(event.currentTarget);
-  };
-
-  const handleUserMenuClick = (event) => {
-    setAnchorUserEl(event.currentTarget);
-  };
+  const navLabel = useMemo(() => {
+    if (location.pathname.startsWith("/slides")) return "Slides";
+    if (location.pathname.startsWith("/setup")) return "Configuration";
+    if (location.pathname.startsWith("/user")) return "Users";
+    if (location.pathname.startsWith("/party")) return "Parties";
+    return "Workspace";
+  }, [location.pathname]);
 
   const handleMenuClose = () => {
     setAnchorSetupEl(null);
@@ -39,29 +36,57 @@ const Navbar = () => {
     setAnchorUserEl(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    dispatch(logout());
+  };
+
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <IconButton edge="start" color="inherit" aria-label="menu">
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" style={{ flexGrow: 3 }}>
-          Navbar
-        </Typography>
-        <Button color="inherit" onClick={handleSlideMenuClick}>
-          Slides
-        </Button>
-        <Button color="inherit" onClick={handleSetupMenuClick}>
-          Setup
-        </Button>
-        <Button color="inherit" onClick={handleUserMenuClick}>
-          User
-        </Button>
+    <AppBar position="sticky" elevation={0} className="topbar">
+      <Toolbar className="topbar__toolbar">
+        <Box className="topbar__brand" onClick={() => navigate("/")}>
+          <div className="topbar__brand-mark">S</div>
+          <div>
+            <p className="topbar__eyebrow">Media Operations</p>
+            <h1 className="topbar__title">Slides Control Center</h1>
+          </div>
+        </Box>
 
-        <SlideMenu anchorEl={anchorSlidesgEl} handleMenuClose={handleMenuClose}/>
+        <Stack direction="row" spacing={1.25} className="topbar__nav">
+          <Button className="topbar__link" onClick={() => navigate("/dashboard")}>
+            Dashboard
+          </Button>
+          <Button className="topbar__link" onClick={(event) => setAnchorSlidesEl(event.currentTarget)}>
+            Slides
+          </Button>
+          <Button className="topbar__link" onClick={(event) => setAnchorSetupEl(event.currentTarget)}>
+            Setup
+          </Button>
+          <Button className="topbar__link" onClick={(event) => setAnchorUserEl(event.currentTarget)}>
+            Account
+          </Button>
+        </Stack>
+
+        <div className="topbar__status">
+          <div className="topbar__status-copy">
+            <span className="topbar__status-label">Current view</span>
+            <strong>{navLabel}</strong>
+          </div>
+          <Chip
+            className="topbar__chip"
+            label={currentUser ? `${currentUser.name} · ${currentUser.role}` : "Guest"}
+          />
+        </div>
+
+        <SlideMenu anchorEl={anchorSlidesEl} handleMenuClose={handleMenuClose} />
         <SetupMenu anchorEl={anchorSetupEl} handleMenuClose={handleMenuClose} />
-        <UserMenu anchorEl={anchorUserEl} handleMenuClose={handleMenuClose} />
-
+        <UserMenu
+          anchorEl={anchorUserEl}
+          handleMenuClose={handleMenuClose}
+          currentUser={currentUser}
+          handeleLogout={handleLogout}
+        />
       </Toolbar>
     </AppBar>
   );

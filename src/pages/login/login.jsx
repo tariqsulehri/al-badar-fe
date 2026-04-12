@@ -1,23 +1,20 @@
-import { Fragment } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import { createNotification } from "../../helpers/notificationsHepler";
 import { setCurrentUser } from "../../features/auth/slice/authSlice";
 import LoginForm from "../../features/auth/login.form";
-import "./login.css";
 import { login } from "../../services/apis/authService";
+import "./login.css";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const assignRole = (user) => {
-    if (user.toLowerCase() == "admin") {
+    if (user.toLowerCase() === "admin") {
       return "admin";
-    } else {
-      return "user";
     }
+    return "user";
   };
 
   const loginSuccess = (username) => {
@@ -28,34 +25,61 @@ const Login = () => {
         token: "112324gg12444&&&&##",
       })
     );
+
     createNotification("success", `Welcome ${username}!`);
-    navigate(`/`);
+    navigate("/");
   };
 
   const handleSubmit = async ({ username, password }) => {
     try {
       const loggedUser = await login({ username, password });
-      if (loggedUser.username) {
+      if (loggedUser?.username) {
         loginSuccess(loggedUser.username);
       } else {
-        createNotification("error", "invalid credentials");
+        createNotification("error", "Invalid credentials");
       }
-
     } catch (error) {
-      console.log("Error", error.message)
+      createNotification("error", error.message || "Login failed");
     }
-
   };
 
-
   return (
-    <div className="p-5 d-flex justify-content-center align-items-center">
-      <div className="w-50">
-        <LoginForm onSubmit={handleSubmit} />
-        <div></div>
+    <section className="login-page">
+      <div className="login-page__panel">
+        <div className="login-page__content">
+          <span className="page-header__eyebrow">Welcome Back</span>
+          <h1>Professional media operations, now with a cleaner experience.</h1>
+          <p>
+            Sign in to manage slides, configuration data, parties, and user workflows
+            from a more modern control center.
+          </p>
+
+          <div className="login-page__highlights">
+            <div className="login-page__highlight">
+              <strong>Modern shell</strong>
+              <span>Upgraded navigation, spacing, and visual rhythm.</span>
+            </div>
+            <div className="login-page__highlight">
+              <strong>Faster scanning</strong>
+              <span>Sharper hierarchy for day-to-day operations.</span>
+            </div>
+            <div className="login-page__highlight">
+              <strong>Ready for growth</strong>
+              <span>A stronger base for future feature design.</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="login-page__card page-card">
+          <div className="login-page__card-header">
+            <h2>Sign in</h2>
+            <p>Use your account to access the workspace.</p>
+          </div>
+          <LoginForm onSubmit={handleSubmit} />
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
-Login.propTypes = {};
+
 export default Login;

@@ -1,55 +1,84 @@
-import React, { useState } from "react";
-
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchFromStore } from "../../utils/fetchFromStore";
-import PropTypes from "prop-types";
+import "./homePage.css";
+
+const highlights = [
+  {
+    title: "Fast feature delivery",
+    copy: "Clean navigation and surface hierarchy make day-to-day tasks easier to scan and complete.",
+  },
+  {
+    title: "Operational visibility",
+    copy: "A sharper dashboard structure gives teams a better sense of active media inventory and setup health.",
+  },
+  {
+    title: "Professional polish",
+    copy: "Refined spacing, typography, and cards bring the product closer to a modern business platform.",
+  },
+];
 
 const Home = () => {
-  /** const { currentUser } = useSelector((state) => state.auth); */
+  const navigate = useNavigate();
   const { currentUser } = fetchFromStore("auth");
-  let [formData, setFormData] = useState({
-    code: "1234AB",
-    supplier: "Sup1",
-    provence: "Punjab",
-    city: "Ahmadpur East",
-    area: "DHA",
-    subArea: "DHA Phase-1",
-    mediaType: "Digital",
-    height_feets: "101",
-    width_feets: "201",
-    location_from: "location from-abc",
-    location_to: "location to1-abc",
-    smd_screen: "smd1-abc",
-    no_of_steamers: "101",
-    working_hrs_day: "11",
-    ad_duration: "21",
-    no_of_spots: "11",
-    rate_per_week: "12",
-    trafic_facing_coming: "FTCF1",
-    facing_trafic_going: "TGT1",
-    category: "B",
-    dimension: "Horizontal",
-    lights: "Available",
-    supQuotedPrice: "4000",
-    supDiscountedPrice: "3800",
-    supFinalPrice: "3800",
-    quotedPrice: "",
-    discountedPrice: "",
-    finalPrice: "",
-    latitude: "112.44444",
-    longitude: "longitude",
-    eyeBall: "eyeBall1",
-    status: "Not Available",
-    is_active: true,
-    image: "./landscapejpeg",
-  });
 
   return (
-    <div id="homepage">
-      <h2> Home Page </h2>
-      <h2>{currentUser ? currentUser.name : ""}</h2>
-    </div>
+    <section className="home-hero page-section">
+      <div className="home-hero__panel page-card">
+        <div className="home-hero__content">
+          <span className="page-header__eyebrow">Modernized Experience</span>
+          <h1>Manage slides, inventory, and setup data from one polished workspace.</h1>
+          <p>
+            The interface now leans into a cleaner product feel with stronger hierarchy,
+            better spacing, and a more executive dashboard aesthetic.
+          </p>
+
+          <div className="home-hero__actions">
+            <button className="btn btn-primary" onClick={() => navigate("/slides/list")}>
+              Explore Slides
+            </button>
+            <button className="home-hero__ghost" onClick={() => navigate("/dashboard")}>
+              Open Dashboard
+            </button>
+          </div>
+
+          <div className="home-hero__welcome">
+            <strong>{currentUser ? `Welcome back, ${currentUser.name}` : "Welcome to Slides Control Center"}</strong>
+            <span>{currentUser ? "Your workspace is ready for feature work and daily operations." : "Sign in to unlock setup, slide, and user workflows."}</span>
+          </div>
+        </div>
+
+        <div className="home-hero__visual">
+          <div className="home-hero__orb home-hero__orb--primary" />
+          <div className="home-hero__orb home-hero__orb--accent" />
+
+          <div className="home-hero__showcase">
+            <div className="home-hero__metric">
+              <span>Media inventory</span>
+              <strong>Centralized</strong>
+            </div>
+            <div className="home-hero__metric">
+              <span>Slide workflows</span>
+              <strong>Smoother</strong>
+            </div>
+            <div className="home-hero__metric">
+              <span>Team experience</span>
+              <strong>More modern</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="home-highlights">
+        {highlights.map((item) => (
+          <article key={item.title} className="page-card home-highlight">
+            <h3>{item.title}</h3>
+            <p>{item.copy}</p>
+          </article>
+        ))}
+      </div>
+    </section>
   );
 };
 
-Home.propTypes = {};
 export default Home;

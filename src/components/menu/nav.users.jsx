@@ -1,49 +1,73 @@
-import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import "./nav.css";
 
-const NavAdmin = ({ currentUser, handeleLogout }) => {
+const UserMenu = ({ anchorEl, handleMenuClose, currentUser, handeleLogout }) => {
+  const navigate = useNavigate();
+  const open = Boolean(anchorEl);
+
   return (
-    <ul className="nav-items" id="nav-bar">
-      {currentUser ? (
-        <Fragment>
-          <li className="nav-item">
-            <Link to={`/setup/prov`}>Provence</Link>
-          </li>
-          <li className="nav-item">
-            <Link to={`/setup/city`}>City</Link>
-          </li>
-          <li className="nav-item">
-            <Link to={`/setup/area`}>Area</Link>
-          </li>
-          <li className="nav-item">
-            <Link to={`/setup/subarea`}>Subarea</Link>
-          </li>
-          <li className="nav-item">
-            <Link to={`/user/list`}>Users</Link>
-          </li>
-          <li className="nav-item">
-            <Link to={`/user/pass`}>Change Password</Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/login" onClick={handeleLogout}>
-              Logout
-            </Link>
-          </li>
-        </Fragment>
-      ) : (
-        <li className="nav-item">
-          <Link to="/login">Login</Link>
-        </li>
+    <Menu
+      id="user-menu"
+      className="menu-top-set"
+      anchorEl={anchorEl}
+      keepMounted
+      open={open}
+      onClose={handleMenuClose}
+    >
+      {currentUser && currentUser.role === 'admin' && (
+        <MenuItem
+          onClick={() => {
+            navigate("/users/create");
+            handleMenuClose();
+          }}
+        >
+          Create User
+        </MenuItem>
       )}
-    </ul>
+      {currentUser && (
+        <MenuItem
+          onClick={() => {
+            navigate("/user/pass");
+            handleMenuClose();
+          }}
+        >
+          Change Password
+        </MenuItem>
+      )}
+      {currentUser && (
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            handeleLogout && handeleLogout();
+            navigate("/login");
+          }}
+        >
+          Logout
+        </MenuItem>
+      )}
+      {!currentUser && (
+        <MenuItem
+          onClick={() => {
+            navigate("/login");
+            handleMenuClose();
+          }}
+        >
+          Login
+        </MenuItem>
+      )}
+    </Menu>
   );
 };
 
-NavAdmin.propTypes = {
+UserMenu.propTypes = {
+  anchorEl: PropTypes.any,
+  handleMenuClose: PropTypes.func.isRequired,
   currentUser: PropTypes.object,
   handeleLogout: PropTypes.func,
 };
 
-export default NavAdmin;
+export default UserMenu;

@@ -1,12 +1,11 @@
 import { lazy } from "react";
 
-const CreateUser = lazy(() => import("../features/user/create.users"));
+const CreateUser = lazy(() => import("../pages/users/createUser"));
 const UserList = lazy(() => import("../features/user/user.list"));
 const Dashboard = lazy(() => import("../pages/dashboard/dashboard"));
 
 const CreateParty =  lazy(()=> import ("../features/party/create.party"));
 const ListParty =  lazy(()=> import ("../features/party/party.list"));
-
 
 const CreateProv =  lazy(()=> import ("../features/config/provience/create.prov"));
 const ListProv =  lazy(()=> import ("../features/config/provience/prov.list"));
@@ -20,13 +19,9 @@ const ListArea =  lazy(()=> import ("../features/config/area/List.area"));
 const CreateSubarea =  lazy(()=> import ("../features/config/subarea/create.subarea"));
 const ListSubarea =  lazy(()=> import ("../features/config/subarea/list.subarea"));
 
-
 const CreateSlide  = lazy(()=> import("../features/slides/create.slides"));
 const SlideList =  lazy(()=> import("../features/slides/slides.list"));
 const SelectedSlideList =  lazy(()=> import("../features/slides/selected.slides.list"));
-
-
-
 
 const routeObjects = [
   {
@@ -34,7 +29,7 @@ const routeObjects = [
     component: Dashboard,
   },
   {
-    path: "/user/create",
+    path: "/users/create",
     component: CreateUser,
   },
   {
@@ -62,7 +57,7 @@ const routeObjects = [
     component: CreateArea,
   },
   {
-    path: "/setup/area/List",
+    path: "/setup/area/list",
     component: ListArea,
   },
   {

@@ -8,7 +8,8 @@ import { getAllProvencsForSelection } from "../../services/apis/config/provServi
 import { getAllCitiesForSelection } from "../../services/apis/config/cityService";
 import { getAllAreasForSelection } from "../../services/apis/config/areaService";
 import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
-import { suppliers, lights, category, mediaTypes, dimension, status } from "../../constant/data";
+import { getAllSuppliersForSelection } from "../../services/apis/partyService";
+import { lights, category, mediaTypes, dimension, status } from "../../constant/data";
 import { createSlide, getSlideById, updateSlide } from "../../services/apis/slideService";
 import CustomButton from "../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../helpers/notificationsHepler";
@@ -58,6 +59,7 @@ const CreateSlide = () => {
   const [cities, setCities] = useState([]);
   const [areas, setAreas] = useState([]);
   const [subAreas, setSubAreas] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,17 +67,19 @@ const CreateSlide = () => {
 
   const fetchSelections = async () => {
     try {
-      const [provencesResp, citiesResp, areasResp, subAreasResp] = await Promise.all([
+      const [provencesResp, citiesResp, areasResp, subAreasResp, suppliersResp] = await Promise.all([
         getAllProvencsForSelection(),
         getAllCitiesForSelection(),
         getAllAreasForSelection(),
         getAllSubAreasForSelection(),
+        getAllSuppliersForSelection(),
       ]);
 
       setProvences(provencesResp);
       setCities(citiesResp);
       setAreas(areasResp);
       setSubAreas(subAreasResp);
+      setSuppliers(suppliersResp);
     } catch (error) {
       showToastNotification("error", "Failed to load selection data");
     }

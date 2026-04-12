@@ -1,65 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setSlideId } from "../../features/slides/slice/slideSlice";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/searchBar/search.bar.component";
 import { getAllSlides } from "../../services/apis/slideService";
 import SlidesDataTable from "../../features/slides/components/table/slides.mui.datatable";
+import CustomButton from "../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../helpers/notificationsHepler";
 
-const columns = [
-  { 
-    name: "_id", 
-    label: "_ID",
-    options: {
-      display: false,
-      filter: false,
-      sort: false
-    }
-  },
-  { name: "provence", label: "Provence" },
-  { name: "city", label: "City" },
-  { name: "area", label: "Area" },
-  { name: "supplier", label: "Supplier" },
-  { name: "mediaType", label: "Media" },
-  { name: "dimension", label: "Dimension" },
-  { name: "height_feets", label: "Height" },
-  { name: "width_feets", label: "Width" },
-  { name: "no_of_steamers", label: "Steamers" },
-  { name: "working_hrs_day", label: "Work-Hrs" },
-  { name: "lights", label: "Lights" },
-  { name: "supQuotedPrice", label: "SQ-Price" },
-  { name: "supDiscountedPrice", label: "SD-Price" },
-  { name: "finalPrice", label: "CF-Price" },
-  { name: "status", label: "Status" },
-];
-
 const SlideList = () => {
+  const navigate = useNavigate();
   const [slides, setSlides] = useState([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchBy, setSearchBy] = useState("code");
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const fetchSlides = async () => {
+  const fetchSlides = async (nextPage = page, nextRowsPerPage = rowsPerPage, nextSearchBy = searchBy, nextSearchText = searchText) => {
     setLoading(true);
     try {
-      const response = await getAllSlides(rowsPerPage, page + 1, searchBy, searchText);
-      
-      if (response && response.data) {
-        console.log('Setting slides data:', response.data);
-        setSlides(response.data);
-        setTotalRows(response.totalRecords || response.data.length);
-      } else {
-        console.log('No data in response');
-        showToastNotification("error", "No data received from server");
-        setSlides([]);
-        setTotalRows(0);
-      }
+      const response = await getAllSlides(nextRowsPerPage, nextPage + 1, nextSearchBy, nextSearchText);
+      setSlides(response?.data || []);
+      setTotalRows(response?.totalRecords || 0);
     } catch (error) {
-      console.error("Error fetching slides:", error);
       showToastNotification("error", "Failed to fetch slides");
       setSlides([]);
       setTotalRows(0);
@@ -70,51 +33,69 @@ const SlideList = () => {
 
   useEffect(() => {
     fetchSlides();
-  }, [page, rowsPerPage, searchBy, searchText]);
+  }, [page, rowsPerPage]);
 
-  const handlePageChange = (newPage) => {
-    console.log('Page changed to:', newPage);
-    setPage(newPage);
-  };
-
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    console.log('Rows per page changed to:', newRowsPerPage);
-    setRowsPerPage(newRowsPerPage);
-    setPage(0); // Reset to first page when changing rows per page
-  };
-
-  const handleSearch = (searchBy, searchText) => {
-    setSearchBy(searchBy);
-    setSearchText(searchText);
+  const handleSearch = (nextSearchBy, nextSearchText) => {
+    setSearchBy(nextSearchBy);
+    setSearchText(nextSearchText);
     setPage(0);
-    if(searchBy !== "" || searchText !== ""){
-       fetchSlides(searchBy, searchText);
-    }
+    fetchSlides(0, rowsPerPage, nextSearchBy, nextSearchText);
   };
-
-  console.log('Current slides state:', slides);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <SearchBar onSearch={handleSearch} />
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '20px' }}>Loading...</div>
-      ) : slides && slides.length > 0 ? (
-        <SlidesDataTable
-          data={slides}
-          columns={columns}
-          totalRows={totalRows}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-        />
-      ) : (
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          {loading ? 'Loading...' : 'No data available'}
+    <section className="page-section surface-grid">
+      <header className="page-header page-card" style={{ padding: "28px" }}>
+        <div>
+          <span className="page-header__eyebrow">Inventory View</span>
+          <h1>Slides List</h1>
+          <p>
+            Review slide inventory with clearer hierarchy, stronger location visibility, and a cleaner
+            edit flow for operational teams.
+          </p>
         </div>
-      )}
-    </div>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <CustomButton label="Create Slide" handleClick={() => navigate("/slides/create")} />
+        </div>
+      </header>
+
+      <div className="stats-grid">
+        <article className="page-card stat-card">
+          <span className="stat-card__label">Inventory Count</span>
+          <div className="stat-card__value">{String(totalRows || 0).padStart(2, "0")}</div>
+          <div className="stat-card__detail">Total matching slide records in the current query.</div>
+        </article>
+        <article className="page-card stat-card">
+          <span className="stat-card__label">Search Scope</span>
+          <div className="stat-card__value">{searchBy}</div>
+          <div className="stat-card__detail">Current field being used for filtering.</div>
+        </article>
+        <article className="page-card stat-card">
+          <span className="stat-card__label">Rows Per Page</span>
+          <div className="stat-card__value">{rowsPerPage}</div>
+          <div className="stat-card__detail">Adjust the page density based on review needs.</div>
+        </article>
+        <article className="page-card stat-card">
+          <span className="stat-card__label">Edit Flow</span>
+          <div className="stat-card__value">Ready</div>
+          <div className="stat-card__detail">Click any row to open the editor for that record.</div>
+        </article>
+      </div>
+
+      <SearchBar onSearch={handleSearch} />
+
+      <SlidesDataTable
+        data={slides}
+        totalRows={totalRows}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        loading={loading}
+        onPageChange={setPage}
+        onRowsPerPageChange={(value) => {
+          setRowsPerPage(value);
+          setPage(0);
+        }}
+      />
+    </section>
   );
 };
 

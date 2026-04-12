@@ -1,93 +1,26 @@
-/* Container layout */
 .search-bar-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-    width: 100%;
-    flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 180px minmax(220px, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.search-select-form,
+.search-input {
+  width: 100%;
+}
+
+.search-btn.MuiButton-root {
+  min-height: 40px;
+  border-radius: 14px;
+  text-transform: none;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .search-bar-row {
+    grid-template-columns: 1fr;
   }
-  
-  /* SELECT: wrapper */
-  .search-select-form {
-    min-width: 160px;
-    max-width: 160px;
-  }
-  
-  /* SELECT: dropdown appearance */
-  .search-select {
-    font-size: 0.95rem;
-    text-transform: capitalize;
-  }
-  
-  /* SELECT: internal select styling */
-  .search-select .MuiSelect-select {
-    height: 40px;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-  }
-  
-  /* TEXTFIELD: wrapper */
-  .search-input {
-    flex: 1;
-    min-width: 180px;
-    max-width: 100%;
-  }
-  
-  /* TEXTFIELD: input styling */
-  .search-input input {
-    height: 40px;
-    font-size: 0.95rem;
-    padding: 8px 12px;
-    box-sizing: border-box;
-    text-transform: capitalize;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* TEXTFIELD: label */
-  .search-input .MuiInputLabel-root {
-    font-size: 0.95rem;
-    top: 50%;
-    transform: translate(14px, -50%) scale(1);
-    transition: all 0.2s ease;
-  }
-  
-  /* TEXTFIELD: label when shrunk */
-  .search-input .MuiInputLabel-shrink {
-    top: 0;
-    transform: translate(14px, -9px) scale(0.85);
-    font-size: 0.9rem;
-  }
-  
-  /* BUTTONS: Search / Refresh */
-  .search-btn {
-    height: 33px !important;
-    min-width: 110px;
-    font-size: 0.95rem;
-    font-weight: 600 !important;
-    text-transform: none !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    box-sizing: border-box;
-    line-height: 1;
-  }
-  
-  /* BUTTON hover effect */
-  .search-btn:hover {
-    transform: scale(1.03);
-    background-color: #1976d2;
-  }
-  
-  /* DROPDOWN items */
-  .MuiMenuItem-root {
-    font-size: 0.95rem;
-    text-transform: capitalize;
-  }
-  
+}

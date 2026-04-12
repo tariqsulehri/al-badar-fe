@@ -1,30 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import ConfigCrudForm from "../components/configCrud/ConfigCrudForm";
+import {
+  createSubArea,
+  deleteSubArea,
+  findSubAreaById,
+  updateSubArea,
+} from "../../../services/apis/config/subAreaService";
 
-import "./create.subarea.css";
-import LoaderSpinner from "../../../components/common/loader/loader.spinner";
-
-const CreateSubarea= () => {
-
- const isLoading = false;
-
-  // if (isLoading) {
-  //   return (
-  //       <LoaderSpinner size={32} role="status" className="spinner-border" />
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //       <h1> Something went wrong</h1>
-  //   );
-  // }
-
+const CreateSubarea = () => {
   return (
-    <div className="create-user-wrapper">
-      <div className="create-user-box box-wrapper">
-        <h1 className="heading-page">{"Create Subarea"}</h1>
-      </div>
-    </div>
+    <ConfigCrudForm
+      singularLabel="Sub Area"
+      collectionLabel="Sub Areas"
+      routeBase="/setup/subarea"
+      findById={findSubAreaById}
+      createItem={createSubArea}
+      updateItem={updateSubArea}
+      deleteItem={deleteSubArea}
+    />
   );
 };
+
 export default CreateSubarea;

@@ -169,6 +169,7 @@ const SlideDetail = ({
             <InputField
               id="height_feets"
               name="height_feets"
+              type="number"
               value={formData.height_feets || ""}
               placeholder="Height"
               required
@@ -181,6 +182,7 @@ const SlideDetail = ({
             <InputField
               id="width_feets"
               name="width_feets"
+              type="number"
               value={formData.width_feets || ""}
               placeholder="Width"
               required
@@ -235,6 +237,7 @@ const SlideDetail = ({
             <InputField
               id="supQuotedPrice"
               name="supQuotedPrice"
+              type="number"
               value={formData.supQuotedPrice || ""}
               placeholder="Supplier quoted price"
               required
@@ -247,6 +250,7 @@ const SlideDetail = ({
             <InputField
               id="supDiscountedPrice"
               name="supDiscountedPrice"
+              type="number"
               value={formData.supDiscountedPrice || ""}
               placeholder="Supplier discounted price"
               required
@@ -259,6 +263,7 @@ const SlideDetail = ({
             <InputField
               id="supFinalPrice"
               name="supFinalPrice"
+              type="number"
               value={formData.supFinalPrice || ""}
               placeholder="Supplier final price"
               required
@@ -271,6 +276,7 @@ const SlideDetail = ({
             <InputField
               id="quotedPrice"
               name="quotedPrice"
+              type="number"
               value={formData.quotedPrice || ""}
               placeholder="Customer quoted price"
               required
@@ -283,6 +289,7 @@ const SlideDetail = ({
             <InputField
               id="discountedPrice"
               name="discountedPrice"
+              type="number"
               value={formData.discountedPrice || ""}
               placeholder="Customer discounted price"
               required
@@ -295,6 +302,7 @@ const SlideDetail = ({
             <InputField
               id="finalPrice"
               name="finalPrice"
+              type="number"
               value={formData.finalPrice || ""}
               placeholder="Customer final price"
               required
@@ -307,6 +315,7 @@ const SlideDetail = ({
             <InputField
               id="latitude"
               name="latitude"
+              type="number"
               value={formData.latitude || ""}
               placeholder="Latitude"
               required
@@ -319,6 +328,7 @@ const SlideDetail = ({
             <InputField
               id="longitude"
               name="longitude"
+              type="number"
               value={formData.longitude || ""}
               placeholder="Longitude"
               required
@@ -331,6 +341,7 @@ const SlideDetail = ({
             <InputField
               id="eyeBall"
               name="eyeBall"
+              type="number"
               value={formData.eyeBall || ""}
               placeholder="Eyeball value"
               required

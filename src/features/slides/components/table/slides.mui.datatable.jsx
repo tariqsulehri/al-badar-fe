@@ -1,303 +1,138 @@
 import React, { useMemo } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import MUIDataTable from "mui-datatables";
+import PptxGenJS from "pptxgenjs";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
 import { addSlide, clearSlides, setPagination } from "../../../../features/slides/slice/slidesForPptxSlice";
 import { setSlideId } from "../../../../features/slides/slice/slideSlice";
 import pptxHelper from "../../components/helpers/pptxHelper";
-import PptxGenJS from "pptxgenjs";
 import { showToastNotification } from "../../../../helpers/notificationsHepler";
-
 import "./slide.table.css";
 
 const columns = [
-  { 
-    name: "_id", 
-    label: "_ID",
-    options: {
-      display: false,
-    }
-  },
-  { name: "provence", label: "Provence", options: { filter: true, sort: true } },
-  { name: "city", label: "City", options: { filter: true, sort: true } },
-  { name: "area", label: "Area", options: { filter: true, sort: true } },
-  { name: "supplier", label: "Supplier", options: { filter: true, sort: true } },
-  { name: "mediaType", label: "Media", options: { filter: true, sort: true } },
+  { name: "_id", label: "ID", options: { display: false, filter: false, sort: false } },
+  { name: "code", label: "Code" },
+  { name: "provence", label: "Provence" },
+  { name: "city", label: "City" },
+  { name: "area", label: "Area" },
+  { name: "subArea", label: "Sub Area" },
+  { name: "supplier", label: "Supplier" },
+  { name: "mediaType", label: "Media Type" },
   { name: "dimension", label: "Dimension" },
   { name: "height_feets", label: "Height" },
   { name: "width_feets", label: "Width" },
-  { name: "no_of_steamers", label: "Steamers" },
-  { name: "working_hrs_day", label: "Work-Hrs" },
   { name: "lights", label: "Lights" },
-  { name: "supQuotedPrice", label: "SQ-Price" },
-  { name: "supDiscountedPrice", label: "SD-Price" },
-  { name: "finalPrice", label: "CF-Price" },
-  { name: "status", label: "Status", options: { filter: true, sort: true } },
+  { name: "supQuotedPrice", label: "Supplier Quote" },
+  { name: "finalPrice", label: "Final Price" },
+  { name: "status", label: "Status" },
 ];
 
-const DataTableComponent = ({ data = [], columns, totalRows, page, rowsPerPage, onPageChange, onRowsPerPageChange, setSearchBy, setSearchText, setPage }) => {
+const SlidesDataTable = ({ data = [], totalRows, page, rowsPerPage, loading, onPageChange, onRowsPerPageChange }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const selectedSlides = useSelector((state) => state.slidesForPptx.slidesForPptx);
   const selectedSlideIds = useSelector((state) => state.slidesForPptx.selectedSlideIds);
 
-  console.log('DataTable received data:', data);
+  const rowsSelected = useMemo(() => {
+    return data
+      .map((row, index) => (selectedSlideIds?.[row?._id] ? index : -1))
+      .filter((index) => index !== -1);
+  }, [data, selectedSlideIds]);
 
-  // Transform data to match column order and add selection state
-  const transformedData = useMemo(() => {
-    console.log('Transforming data:', data);
-    if (!Array.isArray(data)) {
-      console.error('Data is not an array:', data);
-      return [];
+  const handleCreatePptx = async () => {
+    if (!selectedSlides || selectedSlides.length === 0) {
+      showToastNotification("error", "Please select slides first");
+      return;
     }
 
-    return data.map(row => {
-      if (!row) {
-        console.warn('Row is undefined or null');
-        return columns.map(() => '');
-      }
-
-      return columns.map(col => {
-        const value = row[col.name];
-        console.log(`Column ${col.name}:`, value);
-        // Handle null/undefined values
-        if (value === null || value === undefined) return '';
-        // Handle numbers
-        if (typeof value === 'number') return value.toString();
-        // Handle objects
-        if (typeof value === 'object') return JSON.stringify(value);
-        // Handle strings and other types
-        return value;
-      });
-    });
-  }, [data, columns]);
-
-  console.log('Transformed data:', transformedData);
-
-  // Get selected row indexes for current page
-  const getSelectedRowIndexes = () => {
-    if (!Array.isArray(data)) return [];
-    if (!selectedSlideIds || typeof selectedSlideIds !== 'object') return [];
-    
-    return data
-      .map((row, index) => {
-        if (!row || !row._id) return -1;
-        // Add defensive check for selectedSlideIds[row._id]
-        return selectedSlideIds[row._id] === true ? index : -1;
-      })
-      .filter(index => index !== -1);
+    try {
+      const pptx = new PptxGenJS();
+      await pptxHelper.createPptx(pptx, selectedSlides);
+      await pptx.writeFile("test.pptx");
+    } catch (error) {
+      showToastNotification("error", "Failed to create PPTX");
+    }
   };
 
-  // Custom options for the table
   const options = {
-    filterType: "dropdown",
+    filter: false,
+    search: false,
+    download: false,
+    print: false,
+    viewColumns: true,
     selectableRows: "multiple",
-    // search: true,
-    // searchOpen: true,
     selectableRowsOnClick: false,
     selectableRowsHideCheckboxes: false,
-    rowsSelected: getSelectedRowIndexes(),
-    pagination: true,
+    rowsSelected,
     count: totalRows || 0,
     page: page || 0,
-    rowsPerPage: rowsPerPage || 5,
-    rowsPerPageOptions: [5, 10, 25, 50, 100],
+    rowsPerPage: rowsPerPage || 10,
+    rowsPerPageOptions: [5, 10, 20, 50],
     serverSide: true,
-    onRowClick: (rowData, rowMeta) => {
+    responsive: "standard",
+    elevation: 0,
+    textLabels: {
+      body: {
+        noMatch: loading ? "Loading slides..." : "No slides found",
+      },
+    },
+    setTableProps: () => ({
+      className: "slides-table",
+    }),
+    onRowClick: (_, rowMeta) => {
       const row = data[rowMeta.dataIndex];
-      if (row && row._id) {
-        handleSelectSlide(row._id);
+      if (row?._id) {
+        dispatch(setSlideId(row._id));
+        navigate("/slides/create");
       }
     },
-    onRowSelectionChange: (currentRowsSelected, allRowsSelected) => {
+    onRowSelectionChange: (_, allRowsSelected) => {
       const selectedIndexes = allRowsSelected.map((row) => row.dataIndex);
-      const selectedData = selectedIndexes
-        .map((index) => data[index])
-        .filter(Boolean);
+      const selectedData = selectedIndexes.map((index) => data[index]).filter(Boolean);
       dispatch(addSlide(selectedData));
     },
     onChangePage: (newPage) => {
-      console.log('Table page changed to:', newPage);
       dispatch(setPagination({ page: newPage, rowsPerPage }));
       onPageChange(newPage);
     },
     onChangeRowsPerPage: (numberOfRows) => {
-      console.log('Table rows per page changed to:', numberOfRows);
       dispatch(setPagination({ page: 0, rowsPerPage: numberOfRows }));
       onRowsPerPageChange(numberOfRows);
     },
-    textLabels: {
-      body: {
-        noMatch: "No matching records found",
-        toolTip: "Sort",
-        columnHeaderTooltip: column => `Sort for ${column.label}`
-      },
-      pagination: {
-        next: "Next Page",
-        previous: "Previous Page",
-        rowsPerPage: "Rows per page:",
-        displayRows: "of"
-      },
-      toolbar: {
-        search: "Search",
-        downloadCsv: "Download CSV",
-        print: "Print",
-        viewColumns: "View Columns",
-        filterTable: "Filter Table"
-      },
-      filter: {
-        all: "All",
-        title: "FILTERS",
-        reset: "RESET"
-      },
-      viewColumns: {
-        title: "Show Columns",
-        titleAria: "Show/Hide Table Columns"
-      },
-      selectedRows: {
-        text: "rows selected",
-        delete: "Delete",
-        deleteAria: "Delete Selected Rows"
-      }
-    },
-    setTableProps: () => ({
-      style: {
-        fontSize: '0.8125rem',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-      }
-    }),
-    setRowProps: () => ({
-      style: {
-        fontSize: '0.8125rem',
-        height: '28px',
-        padding: '2px 4px'
-      }
-    }),
-    setHeaderProps: () => ({
-      style: {
-        fontSize: '0.8125rem',
-        fontWeight: 600,
-        height: '40px',
-        padding: '2px 4px'
-      }
-    }),
-    responsive: 'standard',
-    tableBodyHeight: 'auto',
-    tableBodyMaxHeight: 'calc(100vh - 200px)',
-    fixedHeader: true,
-    elevation: 0,
-    downloadOptions: {
-      filename: 'slides.csv',
-      separator: ',',
-    },
-    print: true,
-    viewColumns: true,
-    filter: true,
-    customToolbarSelect: () => {
-      return null; // Disable the default selection toolbar
-    },
-    onSearchChange: (searchText) => {
-      // For now, always search by 'code'.
-      if (typeof setSearchBy === 'function') setSearchBy('code');
-      if (typeof setSearchText === 'function') setSearchText(searchText);
-      if (typeof setPage === 'function') setPage(0);
-    },
-  };
-
-  const handleCreatePptx = async () => {
-    if (!selectedSlides || selectedSlides.length === 0) {
-      console.error("No slides selected to create PDF.");
-      return;
-    }
-    try {
-      let pptx = new PptxGenJS();
-      await pptxHelper.createPptx(pptx, selectedSlides);
-      pptx.writeFile("test.pptx");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleViewSelected = () => {
-    if (!selectedSlides || selectedSlides.length === 0) {
-      console.error("No slides selected.");
-      return;
-    }
-    navigate('/slides/selected_slides');
-  };
-
-  const handleSelectSlide = async (slideId) => {
-    if (!slideId) {
-      console.error("Invalid slide ID");
-      return;
-    }
-    try {
-      dispatch(setSlideId(slideId));
-      navigate("/slides/create");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleSearch = (searchBy, searchText) => {
-    setSearchBy(searchBy);
-    setSearchText(searchText);
-    setPage(0);
+    customToolbar: () => (
+      <div className="slides-table__toolbar">
+        <CustomButton label="Create PPTX" handleClick={handleCreatePptx} />
+        <CustomButton
+          label="View Selected"
+          handleClick={() => navigate("/slides/selected_slides")}
+          variant="outlined"
+        />
+        <CustomButton
+          label="Select All"
+          handleClick={() => {
+            dispatch(addSlide(data.filter(Boolean)));
+            showToastNotification("success", "Current page selected");
+          }}
+          variant="outlined"
+        />
+        <CustomButton
+          label="Clear Selection"
+          handleClick={() => {
+            dispatch(clearSlides());
+            showToastNotification("success", "Selection cleared");
+          }}
+          variant="outlined"
+        />
+      </div>
+    ),
   };
 
   return (
-    <div style={{ 
-      padding: '12px', // Reduced padding
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px' // Reduced gap between elements
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        gap: '8px', // Reduced gap between buttons
-        flexWrap: 'wrap' // Allow buttons to wrap on smaller screens
-      }}>
-        <CustomButton 
-          id="createPdf" 
-          name="createPdf" 
-          label="Create PDF" 
-          handleClick={handleCreatePptx} 
-        />
-        <CustomButton 
-          id="viewSelected" 
-          name="viewSelected" 
-          label="View Selected" 
-          handleClick={handleViewSelected} 
-        />
-        <CustomButton 
-          id="selectAll" 
-          name="selectAll" 
-          label="Select All" 
-          handleClick={() => {
-            const validData = data.filter(Boolean);
-            dispatch(addSlide(validData));
-            showToastNotification("success", "All slides selected successfully");
-          }} 
-        />
-        <CustomButton 
-          id="clearSelection" 
-          name="clearSelection" 
-          label="Clear Selection" 
-          handleClick={() => {
-            dispatch(clearSlides());
-            showToastNotification("success", "Selection cleared successfully");
-          }} 
-        />
-      </div>
-      <MUIDataTable
-        title="Slides List"
-        data={data}
-        columns={columns}
-        options={options}
-      />
+    <div className="slides-table-shell page-card">
+      <MUIDataTable title={null} data={data} columns={columns} options={options} />
     </div>
   );
 };
 
-export default DataTableComponent;
+export default SlidesDataTable;

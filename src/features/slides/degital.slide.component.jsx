@@ -47,6 +47,7 @@ function DigitalSlide({ formData, handleChange }) {
         <InputField
           id="no_of_steamers"
           name="no_of_steamers"
+          type="number"
           defaultValue={formData.no_of_steamers}
           placeholder="No of steamers"
           required={true}
@@ -59,6 +60,7 @@ function DigitalSlide({ formData, handleChange }) {
         <InputField
           id="working_hrs_day"
           name="working_hrs_day"
+          type="number"
           defaultValue={formData.working_hrs_day}
           placeholder="Working hrs a day"
           required={true}
@@ -83,6 +85,7 @@ function DigitalSlide({ formData, handleChange }) {
         <InputField
           id="no_of_spots"
           name="no_of_spots"
+          type="number"
           defaultValue={formData.no_of_spots}
           placeholder="No of Spots"
           required={true}
@@ -95,6 +98,7 @@ function DigitalSlide({ formData, handleChange }) {
         <InputField
           id="rate_per_week"
           name="rate_per_week"
+          type="number"
           defaultValue={formData.rate_per_week}
           placeholder="Rate per week"
           required={true}

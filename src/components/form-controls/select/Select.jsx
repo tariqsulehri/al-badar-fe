@@ -25,7 +25,40 @@ function CustomSelect({ label, options = [], onChange, name, value, defaultValue
         defaultValue={resolvedDefaultValue}
         value={resolvedValue}
         isOptionEqualToValue={(option, selected) => option.value === selected?.value}
-        renderInput={(params) => <TextField {...params} size="medium" label={label} />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            size="medium"
+            label={label}
+            placeholder={resolvedValue ? "" : label}
+            InputLabelProps={{
+              shrink: true,
+              sx: {
+                fontSize: 14,
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                minHeight: 56,
+                borderRadius: "16px",
+                backgroundColor: "rgba(255,255,255,0.96)",
+                alignItems: "center",
+              },
+              "& .MuiAutocomplete-input": {
+                fontSize: 16,
+                lineHeight: 1.4,
+                padding: "16px 4px 16px 6px !important",
+              },
+              "& .MuiInputLabel-root": {
+                color: "var(--text-secondary)",
+              },
+              "& .MuiInputLabel-shrink": {
+                backgroundColor: "#fff",
+                padding: "0 6px",
+              },
+            }}
+          />
+        )}
       />
     </div>
   );

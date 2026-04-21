@@ -11,6 +11,7 @@ import { logout } from "../../features/auth/slice/authSlice";
 import SlideMenu from "./menu.slides";
 import SetupMenu from "./menu.setup";
 import UserMenu from "./nav.users";
+import ThemeSwitcher from "../ThemeSwitcher/ThemeSwitcher";
 import "./nav.css";
 
 const Navbar = () => {
@@ -69,6 +70,7 @@ const Navbar = () => {
         </Stack>
 
         <div className="topbar__status">
+          <ThemeSwitcher />
           <div className="topbar__status-copy">
             <span className="topbar__status-label">Current view</span>
             <strong>{navLabel}</strong>

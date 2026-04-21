@@ -1,7 +1,7 @@
 import React from "react";
 import MUIDataTable from "mui-datatables";
 import { useDispatch } from "react-redux";
-import { addSlide, removeSlide } from "../../slice/slidesForPptxSlice";
+import { addSlide, clearSlides, removeSlide } from "../../slice/slidesForPptxSlice";
 import CustomButton from "../../../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../../../helpers/notificationsHepler";
 import IconButton from '@mui/material/IconButton';
@@ -54,12 +54,13 @@ const SelectedDataTableComponent = ({data, columns}) => {
           name="clearAll" 
           label="Clear All" 
           handleClick={() => {
-            dispatch(addSlide([]));
+            dispatch(clearSlides());
             showToastNotification("success", "All slides cleared from selection");
-          }} 
+          }}
+          variant="outlined"
         />
       );
-    },
+     },
     customToolbarSelect: () => {
       return null; // Disable the default toolbar
     },

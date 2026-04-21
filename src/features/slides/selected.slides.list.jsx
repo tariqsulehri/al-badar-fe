@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { clearSlides } from "../../features/slides/slice/slidesForPptxSlice";
-import { setSlideId } from "../../features/slides/slice/slideSlice";
 import CustomButton from "../../components/form-controls/buttons/customButton";
 import DataTableComponent from "./components/table/selected.slides.datatable";
-import { getSlideById } from "../../services/apis/slideService";
+import { clearSlides } from "./slice/slidesForPptxSlice";
 import pptxHelper from "./components/helpers/pptxHelper";
 import PptxGenJS from "pptxgenjs";
+import { showToastNotification } from "../../helpers/notificationsHepler";
 
 const columns = [
   { 
@@ -38,17 +37,21 @@ const columns = [
 
 const SelectedSlideList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const slides = useSelector((state) => state.slidesForPptx.slidesForPptx);
+  const hasSlides = slides.length > 0;
 
   const handleCreatePptx = async () => {
-    if (slides.length === 0) {
-      console.error("No slides selected to create PDF.");
+    if (!hasSlides) {
+      showToastNotification("warning", "No slides selected");
       return;
     }
     try {
-      let pptx = new PptxGenJS();
+      const pptx = new PptxGenJS();
       await pptxHelper.createPptx(pptx, slides);
-      pptx.writeFile("selected_slides.pptx");
+      await pptx.writeFile("selected_slides.pptx");
+      dispatch(clearSlides());
+      showToastNotification("success", "PPTX generated and selected slides reset");
     } catch (error) {
       console.log(error.message);
     }
@@ -58,23 +61,43 @@ const SelectedSlideList = () => {
     navigate('/slides/list');
   };
 
-  if (slides && slides.length > 0) {
-    return (
-      <div style={{ padding: '20px' }}>
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-          <CustomButton 
-            id="createPptx" 
-            name="createPptx" 
-            label="Create PPTX" 
-            handleClick={handleCreatePptx} 
-          />
-          <CustomButton 
-            id="backToList" 
-            name="backToList" 
-            label="Back to List" 
-            handleClick={handleBackToList} 
-          />
-        </div>
+  const handleResetSelectedSlides = () => {
+    if (!hasSlides) {
+      showToastNotification("info", "No selected slides to reset");
+      return;
+    }
+
+    dispatch(clearSlides());
+    showToastNotification("success", "Selected slides reset");
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <CustomButton
+          id="createPptx"
+          name="createPptx"
+          label="Generate PPTX"
+          handleClick={handleCreatePptx}
+          disabled={!hasSlides}
+        />
+        <CustomButton
+          id="backToList"
+          name="backToList"
+          label="Back to List"
+          handleClick={handleBackToList}
+          variant="outlined"
+        />
+        <CustomButton
+          id="resetSelectedSlides"
+          name="resetSelectedSlides"
+          label="Reset Selected"
+          handleClick={handleResetSelectedSlides}
+          variant="outlined"
+          color="warning"
+        />
+      </div>
+      {hasSlides ? (
         <DataTableComponent 
           data={slides} 
           columns={columns} 
@@ -91,21 +114,16 @@ const SelectedSlideList = () => {
             })
           }}
         />
-      </div>
-    );
-  } else {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Slides Selected</h2>
-        <CustomButton 
-          id="backToList" 
-          name="backToList" 
-          label="Back to List" 
-          handleClick={handleBackToList} 
-        />
-      </div>
-    );
-  }
+      ) : (
+        <div style={{ textAlign: 'center', padding: '28px 16px' }}>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>No Slides Selected</h2>
+          <p style={{ marginBottom: '1rem', color: '#6b7280' }}>
+            Select slides from the list first, then use the Generate PPTX button here.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SelectedSlideList;

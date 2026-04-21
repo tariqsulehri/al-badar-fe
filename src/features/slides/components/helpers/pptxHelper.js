@@ -1,42 +1,42 @@
 const pptxHelper = {
   createPptx: async function (pptx, records) {
-    const textFontSize = 12;
+    if (!records || records.length === 0) {
+      return;
+    }
 
-    records &&
-      records.forEach(async (slideData) => {
-        let slide = pptx.addSlide();
-        const imageX = 2.3;
-        const imageY = 0.2;
-        const imageHeight = 5.25;
-        const imageWidth = 7.5;
-        const imagePath = slideData.image;
+    for (const slideData of records) {
+      const slide = pptx.addSlide();
+      const imageX = 2.3;
+      const imageY = 0.2;
+      const imageHeight = 5.25;
+      const imageWidth = 7.5;
+      const imagePath = slideData.image;
 
-        slide.addShape(pptx.shapes.RECTANGLE, {
-          x: 0.1,
-          y: 0.1,
-          w: 9.8,
-          h: 5.44,
-          fill: { color: "#ffffff" },
-          rotate: 0,
-        });
-
-        slide.addShape(pptx.shapes.RECTANGLE, {
-          x: 0.1,
-          y: 0.1,
-          w: 9.8,
-          h: 5.44,
-          fill: { color: "#ffffff" },
-          rotate: 0,
-        });
-
-        await this.pptxMainImage(pptx, slide, imagePath, imageX, imageY, imageHeight, imageWidth, textFontSize);
-        await this.pptxDetailsTable(slide, slideData);
-        await this.pptxLogoTable(slide);
-        pptx.writeFile("test.pptx");
+      slide.addShape(pptx.shapes.RECTANGLE, {
+        x: 0.1,
+        y: 0.1,
+        w: 9.8,
+        h: 5.44,
+        fill: { color: "#ffffff" },
+        rotate: 0,
       });
+
+      slide.addShape(pptx.shapes.RECTANGLE, {
+        x: 0.1,
+        y: 0.1,
+        w: 9.8,
+        h: 5.44,
+        fill: { color: "#ffffff" },
+        rotate: 0,
+      });
+
+      await this.pptxMainImage(slide, imagePath, imageX, imageY, imageHeight, imageWidth);
+      await this.pptxDetailsTable(slide, slideData);
+      await this.pptxLogoTable(slide);
+    }
   },
 
-  pptxMainImage: async function (pptx, slide, imagePath, imageX, imageY, imageHeight, imageWidth) {
+  pptxMainImage: async function (slide, imagePath, imageX, imageY, imageHeight, imageWidth) {
     // const imageX = 2.3;
     // const imageY = 0.2;
     // const imageHeight = 5.25;

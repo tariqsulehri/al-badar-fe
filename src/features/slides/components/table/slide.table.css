@@ -1,40 +1,126 @@
 .slides-table-shell {
-  padding: 14px;
+  padding: 0;
   overflow: hidden;
 }
 
-.slides-table__toolbar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 8px 8px 16px;
+/* ── Hide ALL toolbars inside the shell (title bar + "N selected" bar) */
+.slides-table-shell .MuiToolbar-root {
+  display: none !important;
 }
 
+/* ── Paper wrapper ────────────────────────────────────────────────── */
+.slides-table-shell .MuiPaper-root {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--text-primary) !important;
+}
+
+/* ── Header row ───────────────────────────────────────────────────── */
 .slides-table .MuiTableCell-head {
-  background: rgba(15, 118, 110, 0.06);
-  color: var(--text-primary);
+  background: var(--brand-muted);
+  color: var(--text-muted);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
 }
 
+/* ── Data rows ────────────────────────────────────────────────────── */
 .slides-table .MuiTableCell-body {
-  font-size: 14px;
-  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  line-height: 1.4;
 }
 
+/* First visible column (code) slightly emphasized */
+.slides-table .MuiTableCell-body:nth-child(2) {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ── Row states ───────────────────────────────────────────────────── */
 .slides-table .MuiTableRow-root {
   cursor: pointer;
+  transition: background 120ms ease;
 }
 
 .slides-table .MuiTableRow-root:hover {
-  background: rgba(15, 118, 110, 0.04);
+  background: var(--brand-muted) !important;
 }
 
-.slides-table .MuiToolbar-root {
-  padding-left: 0;
-  padding-right: 0;
+.slides-table .MuiTableRow-root.Mui-selected,
+.slides-table .MuiTableRow-root.Mui-selected:hover {
+  background: rgba(var(--brand-rgb, 15 118 110) / 0.07) !important;
 }
 
-.slides-table .MuiPaper-root {
-  box-shadow: none !important;
+/* ── Checkbox ─────────────────────────────────────────────────────── */
+.slides-table .MuiCheckbox-root {
+  color: var(--border-strong) !important;
+  padding: 6px;
+}
+
+.slides-table .MuiCheckbox-root.Mui-checked,
+.slides-table .MuiCheckbox-root.MuiCheckbox-indeterminate {
+  color: var(--brand) !important;
+}
+
+/* ── Pagination ───────────────────────────────────────────────────── */
+.slides-table-shell .MuiTablePagination-root {
+  color: var(--text-muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+  padding: 0 8px;
+}
+
+.slides-table-shell .MuiTablePagination-select,
+.slides-table-shell .MuiTablePagination-displayedRows {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.slides-table-shell .MuiTablePagination-selectIcon {
+  color: var(--text-muted);
+}
+
+.slides-table-shell .MuiTablePagination-actions button {
+  color: var(--text-muted);
+}
+
+.slides-table-shell .MuiTablePagination-actions button:disabled {
+  color: var(--border-strong);
+}
+
+/* ── Column sort icons ────────────────────────────────────────────── */
+.slides-table .MuiTableSortLabel-root {
+  color: var(--text-muted) !important;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.slides-table .MuiTableSortLabel-root:hover,
+.slides-table .MuiTableSortLabel-root.Mui-active {
+  color: var(--brand-strong) !important;
+}
+
+.slides-table .MuiTableSortLabel-icon {
+  color: var(--brand) !important;
+}
+
+/* ── Dark theme overrides ─────────────────────────────────────────── */
+[data-theme="carbon"] .slides-table .MuiTableCell-head,
+[data-theme="plum"]   .slides-table .MuiTableCell-head {
+  color: var(--brand-strong);
+}
+
+[data-theme="carbon"] .slides-table-shell .MuiSvgIcon-root,
+[data-theme="plum"]   .slides-table-shell .MuiSvgIcon-root {
+  color: var(--text-muted);
 }

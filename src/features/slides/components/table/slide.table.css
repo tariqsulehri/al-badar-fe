@@ -3,8 +3,9 @@
   overflow: hidden;
 }
 
-/* ── Hide ALL toolbars inside the shell (title bar + "N selected" bar) */
-.slides-table-shell .MuiToolbar-root {
+/* ── Hide table title/selection toolbars while keeping pagination visible */
+.slides-table-shell .MUIDataTableToolbar-root,
+.slides-table-shell .MUIDataTableToolbarSelect-root {
   display: none !important;
 }
 
@@ -94,6 +95,89 @@
 
 .slides-table-shell .MuiTablePagination-actions button:disabled {
   color: var(--border-strong);
+}
+
+.slides-pagination-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border-soft);
+  padding: 10px 18px;
+  min-height: 62px;
+}
+
+.slides-pagination-bar .MuiTablePagination-root {
+  border-top: 0;
+  padding: 0;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.slides-pagination-bar .MuiTablePagination-toolbar {
+  min-height: 40px;
+  padding: 0;
+  gap: 12px;
+  align-items: center;
+}
+
+.slides-pagination-bar .MuiTablePagination-spacer {
+  display: none;
+}
+
+.slides-pagination-bar .MuiTablePagination-selectLabel,
+.slides-pagination-bar .MuiTablePagination-displayedRows {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.slides-pagination-bar .MuiTablePagination-select {
+  min-width: 42px;
+  padding-right: 24px;
+}
+
+.slides-pagination-bar .MuiTablePagination-actions {
+  margin-left: 4px;
+}
+
+.slides-page-jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  padding: 0;
+  min-height: 40px;
+}
+
+.slides-page-jump .MuiTextField-root {
+  width: 84px;
+}
+
+.slides-page-jump .MuiInputBase-input {
+  padding: 7px 10px;
+  text-align: center;
+}
+
+.slides-page-jump .MuiButton-root {
+  min-width: 52px;
+  min-height: 34px;
+  border-radius: 8px;
+  text-transform: none;
+  font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .slides-pagination-bar {
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+
+  .slides-pagination-bar .MuiTablePagination-toolbar {
+    flex-wrap: wrap;
+    padding-left: 0;
+  }
 }
 
 /* ── Column sort icons ────────────────────────────────────────────── */

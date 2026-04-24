@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import PptxGenJS from "pptxgenjs";
 import SearchBar from "../../components/searchBar/search.bar.component";
-import { getAllSlides } from "../../services/apis/slideService";
+import { getAllSlides, getSlidesBySearch } from "../../services/apis/slideService";
 import SlidesDataTable from "../../features/slides/components/table/slides.mui.datatable";
 import CustomButton from "../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../helpers/notificationsHepler";
@@ -24,6 +24,11 @@ const SlideList = () => {
   const [searchBy,    setSearchBy]    = useState("code");
   const [searchText,  setSearchText]  = useState("");
   const [loading,     setLoading]     = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  const activeSearchLabel = searchText
+    ? `${searchBy}: "${searchText}"`
+    : "all slides";
 
   const fetchSlides = async (
     nextPage        = page,
@@ -59,6 +64,29 @@ const SlideList = () => {
     showToastNotification("success", `${slides.length} slides on this page selected`);
   };
 
+  const getActiveSearchSlides = async () => {
+    const matchedSlides = await getSlidesBySearch(searchBy, searchText, totalRows);
+    return matchedSlides.filter(Boolean);
+  };
+
+  const handleSelectAllMatching = async () => {
+    if (!totalRows) {
+      showToastNotification("info", "No slides match the current search");
+      return;
+    }
+
+    setExportLoading(true);
+    try {
+      const matchedSlides = await getActiveSearchSlides();
+      dispatch(addSlide(matchedSlides));
+      showToastNotification("success", `${matchedSlides.length} matching slides selected`);
+    } catch {
+      showToastNotification("error", "Failed to select matching slides");
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   const handleReset = () => {
     dispatch(clearSlides());
     showToastNotification("success", "Selection cleared");
@@ -79,6 +107,32 @@ const SlideList = () => {
     }
   };
 
+  const handleGenerateSearchPptx = async () => {
+    if (!totalRows) {
+      showToastNotification("info", "No slides match the current search");
+      return;
+    }
+
+    setExportLoading(true);
+    try {
+      const matchedSlides = await getActiveSearchSlides();
+
+      if (!matchedSlides.length) {
+        showToastNotification("info", "No slides match the current search");
+        return;
+      }
+
+      const pptx = new PptxGenJS();
+      await pptxHelper.createPptx(pptx, matchedSlides);
+      await pptx.writeFile("searched-slides-export.pptx");
+      showToastNotification("success", `PPTX generated for ${matchedSlides.length} matching slides`);
+    } catch {
+      showToastNotification("error", "Failed to create PPTX for search");
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   return (
     <section className="page-section surface-grid">
 
@@ -95,6 +149,13 @@ const SlideList = () => {
             label="Select Page"
             handleClick={handleSelectPage}
             variant="outlined"
+            disabled={loading || exportLoading || !slides.length}
+          />
+          <CustomButton
+            label={`Select All Matching (${totalRows || 0})`}
+            handleClick={handleSelectAllMatching}
+            variant="outlined"
+            disabled={loading || exportLoading || !totalRows}
           />
           <CustomButton
             label="View Selected"
@@ -104,7 +165,13 @@ const SlideList = () => {
           <CustomButton
             label={selectedCount ? `Generate PPTX (${selectedCount})` : "Generate PPTX"}
             handleClick={handleGeneratePptx}
-            disabled={!selectedCount}
+            disabled={exportLoading || !selectedCount}
+          />
+          <CustomButton
+            label={`PPTX For Search (${totalRows || 0})`}
+            handleClick={handleGenerateSearchPptx}
+            color="success"
+            disabled={loading || exportLoading || !totalRows}
           />
           {selectedCount > 0 && (
             <CustomButton
@@ -141,7 +208,7 @@ const SlideList = () => {
         <article className="page-card stat-card">
           <span className="stat-card__label">Search Field</span>
           <div className="stat-card__value">{searchBy}</div>
-          <div className="stat-card__detail">Active filter field</div>
+          <div className="stat-card__detail">{activeSearchLabel}</div>
         </article>
         <article className="page-card stat-card">
           <span className="stat-card__label">Page Size</span>

@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MUIDataTable from "mui-datatables";
 import { useDispatch, useSelector } from "react-redux";
+import { Box, Button, TablePagination, TextField, Typography } from "@mui/material";
 import { addSlide, removeSlide, setPagination } from "../../../../features/slides/slice/slidesForPptxSlice";
 import { setSlideId } from "../../../../features/slides/slice/slideSlice";
-import { showToastNotification } from "../../../../helpers/notificationsHepler";
 import "./slide.table.css";
 
 const columns = [
@@ -37,6 +37,12 @@ const SlidesDataTable = ({
   const dispatch  = useDispatch();
   const navigate  = useNavigate();
   const selectedSlideIds = useSelector((state) => state.slidesForPptx.selectedSlideIds);
+  const totalPages = Math.max(Math.ceil((totalRows || 0) / (rowsPerPage || 10)), 1);
+  const [pageInput, setPageInput] = useState(String((page || 0) + 1));
+
+  useEffect(() => {
+    setPageInput(String((page || 0) + 1));
+  }, [page]);
 
   const rowsSelected = useMemo(() =>
     data.map((row, i) => (selectedSlideIds?.[row?._id] ? i : -1)).filter((i) => i !== -1),
@@ -52,10 +58,7 @@ const SlidesDataTable = ({
     selectableRows: "multiple",
     selectableRowsOnClick: false,
     rowsSelected,
-    count: totalRows || 0,
-    page: page || 0,
-    rowsPerPage: rowsPerPage || 10,
-    rowsPerPageOptions: [5, 10, 20, 50],
+    pagination: false,
     serverSide: true,
     responsive: "standard",
     elevation: 0,
@@ -84,22 +87,60 @@ const SlidesDataTable = ({
       toRemove.forEach((s) => dispatch(removeSlide(s)));
       if (selectedData.length > 0) dispatch(addSlide(selectedData));
     },
-    onChangePage: (newPage) => {
-      dispatch(setPagination({ page: newPage, rowsPerPage }));
-      onPageChange(newPage);
-    },
-    onChangeRowsPerPage: (n) => {
-      dispatch(setPagination({ page: 0, rowsPerPage: n }));
-      onRowsPerPageChange(n);
-    },
     customToolbar: () => null,
     customToolbarSelect: () => null,
     onRowsDelete: () => false,
   };
 
+  const goToPage = (nextPage) => {
+    const safePage = Math.min(Math.max(Number(nextPage) || 1, 1), totalPages) - 1;
+    dispatch(setPagination({ page: safePage, rowsPerPage }));
+    onPageChange(safePage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    const nextRowsPerPage = Number(event.target.value);
+    dispatch(setPagination({ page: 0, rowsPerPage: nextRowsPerPage }));
+    onRowsPerPageChange(nextRowsPerPage);
+  };
+
   return (
     <div className="slides-table-shell page-card">
       <MUIDataTable title={null} data={data} columns={columns} options={options} />
+      <Box className="slides-pagination-bar">
+        <TablePagination
+          component="div"
+          count={totalRows || 0}
+          rowsPerPage={rowsPerPage || 10}
+          page={Math.min(page || 0, totalPages - 1)}
+          onPageChange={(_, nextPage) => goToPage(nextPage + 1)}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          rowsPerPageOptions={[5, 10, 20, 50, 100]}
+        />
+        <Box className="slides-page-jump">
+          <Typography component="span" variant="body2">
+            Page
+          </Typography>
+          <TextField
+            value={pageInput}
+            type="number"
+            size="small"
+            inputProps={{ min: 1, max: totalPages }}
+            onChange={(event) => setPageInput(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                goToPage(pageInput);
+              }
+            }}
+          />
+          <Typography component="span" variant="body2">
+            of {totalPages}
+          </Typography>
+          <Button variant="outlined" size="small" onClick={() => goToPage(pageInput)}>
+            Go
+          </Button>
+        </Box>
+      </Box>
     </div>
   );
 };

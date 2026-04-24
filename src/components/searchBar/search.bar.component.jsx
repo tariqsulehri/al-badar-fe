@@ -4,12 +4,29 @@ import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import "./search.bar.css";
 
+const SEARCH_FIELDS = [
+  { value: "all", label: "All Fields" },
+  { value: "code", label: "Code" },
+  { value: "supplier", label: "Supplier" },
+  { value: "provence", label: "Province" },
+  { value: "city", label: "City" },
+  { value: "area", label: "Area" },
+  { value: "subArea", label: "Sub Area" },
+  { value: "mediaType", label: "Media Type" },
+  { value: "dimension", label: "Dimension" },
+  { value: "lights", label: "Lights" },
+  { value: "status", label: "Status" },
+  { value: "category", label: "Category" },
+  { value: "finalPrice", label: "Final Price" },
+  { value: "supQuotedPrice", label: "Supplier Quote" },
+];
+
 const SearchBar = ({ onSearch }) => {
   const [searchBy, setSearchBy] = useState("code");
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
-    onSearch(searchBy, searchText);
+    onSearch(searchBy, searchText.trim());
   };
 
   const handleRefresh = () => {
@@ -23,13 +40,11 @@ const SearchBar = ({ onSearch }) => {
       <FormControl className="search-select-form" size="small">
         <InputLabel>Search By</InputLabel>
         <Select value={searchBy} label="Search By" onChange={(e) => setSearchBy(e.target.value)}>
-          <MenuItem value="code">Code</MenuItem>
-          <MenuItem value="provence">Provence</MenuItem>
-          <MenuItem value="city">City</MenuItem>
-          <MenuItem value="area">Area</MenuItem>
-          <MenuItem value="subArea">Sub Area</MenuItem>
-          <MenuItem value="supplier">Supplier</MenuItem>
-          <MenuItem value="mediaType">Media Type</MenuItem>
+          {SEARCH_FIELDS.map((field) => (
+            <MenuItem key={field.value} value={field.value}>
+              {field.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
@@ -39,6 +54,11 @@ const SearchBar = ({ onSearch }) => {
         variant="outlined"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
         size="small"
         placeholder="Search slide records"
       />

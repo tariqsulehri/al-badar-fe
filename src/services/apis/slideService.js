@@ -71,6 +71,30 @@ export const getAllSlides = async (limit = 10, page = 1, searchBy = 'code', sear
   }
 };
 
+export const getSlidesBySearch = async (searchBy = 'code', searchText = '', totalRecords = 0) => {
+  try {
+    const firstPage = await getAllSlides(1, 1, searchBy, searchText);
+    const recordCount = totalRecords || firstPage.totalRecords || 0;
+    const pageSize = 5000;
+
+    if (!recordCount) {
+      return [];
+    }
+
+    const totalPages = Math.ceil(recordCount / pageSize);
+    const pages = await Promise.all(
+      Array.from({ length: totalPages }, (_, index) =>
+        getAllSlides(pageSize, index + 1, searchBy, searchText)
+      )
+    );
+
+    return pages.flatMap((pageResult) => pageResult.data || []);
+  } catch (error) {
+    console.error('Error fetching slides by search:', error);
+    throw error;
+  }
+};
+
 export const getSlideById = async (id) => {
   try {
     const response = await api.get(`/slides/find/${id}`);
@@ -105,7 +129,7 @@ export const updateSlide = async (id, slideData) => {
 
 export const deleteSlide = async (id) => {
   try {
-    const response = await api.get(`/slides/${id}`);
+    const response = await api.get(`/slides/delete/${id}`);
     showToastNotification("success", 'Slide deleted successfully.');
     return response.data.result;
   } catch (error) {

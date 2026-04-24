@@ -1,6 +1,6 @@
 .search-bar-row {
   display: grid;
-  grid-template-columns: 180px minmax(220px, 1fr) auto auto;
+  grid-template-columns: minmax(180px, 220px) minmax(220px, 1fr) auto auto;
   gap: 14px;
   align-items: center;
   padding: 18px;
@@ -14,9 +14,10 @@
 
 .search-btn.MuiButton-root {
   min-height: 40px;
-  border-radius: 14px;
+  border-radius: 8px;
   text-transform: none;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 @media (max-width: 900px) {

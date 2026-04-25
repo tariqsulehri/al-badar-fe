@@ -4,12 +4,25 @@ import { useDispatch, useSelector } from "react-redux";
 import PptxGenJS from "pptxgenjs";
 import SearchBar from "../../components/searchBar/search.bar.component";
 import { getAllSlides, getSlidesBySearch } from "../../services/apis/slideService";
+import { getAllCitiesForSelection } from "../../services/apis/config/cityService";
+import { getAllAreasForSelection } from "../../services/apis/config/areaService";
+import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaService";
+import { getAllSuppliersForSelection } from "../../services/apis/partyService";
 import SlidesDataTable from "../../features/slides/components/table/slides.mui.datatable";
 import CustomButton from "../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../helpers/notificationsHepler";
 import { addSlide, clearSlides } from "../../features/slides/slice/slidesForPptxSlice";
 import pptxHelper from "./components/helpers/pptxHelper";
 import ThemeSwitcher from "../../components/ThemeSwitcher/ThemeSwitcher";
+import { category } from "../../constant/data";
+
+const emptyFilters = {
+  city: "",
+  area: "",
+  subArea: "",
+  supplier: "",
+  category: "",
+};
 
 const SlideList = () => {
   const navigate  = useNavigate();
@@ -23,22 +36,34 @@ const SlideList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchBy,    setSearchBy]    = useState("code");
   const [searchText,  setSearchText]  = useState("");
+  const [filters,     setFilters]     = useState(emptyFilters);
+  const [filterOptions, setFilterOptions] = useState({
+    cities: [],
+    areas: [],
+    subAreas: [],
+    suppliers: [],
+    categories: category,
+  });
   const [loading,     setLoading]     = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
 
+  const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const activeSearchLabel = searchText
     ? `${searchBy}: "${searchText}"`
-    : "all slides";
+    : activeFilterCount
+      ? `${activeFilterCount} advanced filter${activeFilterCount === 1 ? "" : "s"}`
+      : "all slides";
 
   const fetchSlides = async (
     nextPage        = page,
     nextRowsPerPage = rowsPerPage,
     nextSearchBy    = searchBy,
     nextSearchText  = searchText,
+    nextFilters     = filters,
   ) => {
     setLoading(true);
     try {
-      const response = await getAllSlides(nextRowsPerPage, nextPage + 1, nextSearchBy, nextSearchText);
+      const response = await getAllSlides(nextRowsPerPage, nextPage + 1, nextSearchBy, nextSearchText, nextFilters);
       setSlides(response?.data || []);
       setTotalRows(response?.totalRecords || 0);
     } catch {
@@ -52,11 +77,37 @@ const SlideList = () => {
 
   useEffect(() => { fetchSlides(); }, [page, rowsPerPage]);
 
-  const handleSearch = (nextSearchBy, nextSearchText) => {
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const [cities, areas, subAreas, suppliers] = await Promise.all([
+          getAllCitiesForSelection(),
+          getAllAreasForSelection(),
+          getAllSubAreasForSelection(),
+          getAllSuppliersForSelection(),
+        ]);
+
+        setFilterOptions({
+          cities,
+          areas,
+          subAreas,
+          suppliers,
+          categories: category,
+        });
+      } catch {
+        showToastNotification("error", "Failed to load advanced filter options");
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
+
+  const handleSearch = (nextSearchBy, nextSearchText, nextFilters = filters) => {
     setSearchBy(nextSearchBy);
     setSearchText(nextSearchText);
+    setFilters(nextFilters);
     setPage(0);
-    fetchSlides(0, rowsPerPage, nextSearchBy, nextSearchText);
+    fetchSlides(0, rowsPerPage, nextSearchBy, nextSearchText, nextFilters);
   };
 
   const handleSelectPage = () => {
@@ -65,7 +116,7 @@ const SlideList = () => {
   };
 
   const getActiveSearchSlides = async () => {
-    const matchedSlides = await getSlidesBySearch(searchBy, searchText, totalRows);
+    const matchedSlides = await getSlidesBySearch(searchBy, searchText, totalRows, filters);
     return matchedSlides.filter(Boolean);
   };
 
@@ -224,7 +275,7 @@ const SlideList = () => {
         </article>
       </div>
 
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} filterOptions={filterOptions} />
 
       <SlidesDataTable
         data={slides}

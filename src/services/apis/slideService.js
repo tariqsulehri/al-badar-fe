@@ -35,15 +35,16 @@ api.interceptors.response.use(
   }
 );
 
-export const getAllSlides = async (limit = 10, page = 1, searchBy = 'code', searchText = '') => {
+export const getAllSlides = async (limit = 10, page = 1, searchBy = 'code', searchText = '', filters = {}) => {
   try {
-    console.log('Fetching slides with params:', { limit, page, searchBy, searchText });
+    console.log('Fetching slides with params:', { limit, page, searchBy, searchText, filters });
     const response = await api.get('/slides/list', {
       params: {
         pageSize: limit,
         pageNo: page,
         searchBy,
-        searchText
+        searchText,
+        filters: JSON.stringify(filters || {})
       }
     });
     
@@ -71,9 +72,9 @@ export const getAllSlides = async (limit = 10, page = 1, searchBy = 'code', sear
   }
 };
 
-export const getSlidesBySearch = async (searchBy = 'code', searchText = '', totalRecords = 0) => {
+export const getSlidesBySearch = async (searchBy = 'code', searchText = '', totalRecords = 0, filters = {}) => {
   try {
-    const firstPage = await getAllSlides(1, 1, searchBy, searchText);
+    const firstPage = await getAllSlides(1, 1, searchBy, searchText, filters);
     const recordCount = totalRecords || firstPage.totalRecords || 0;
     const pageSize = 5000;
 
@@ -84,7 +85,7 @@ export const getSlidesBySearch = async (searchBy = 'code', searchText = '', tota
     const totalPages = Math.ceil(recordCount / pageSize);
     const pages = await Promise.all(
       Array.from({ length: totalPages }, (_, index) =>
-        getAllSlides(pageSize, index + 1, searchBy, searchText)
+        getAllSlides(pageSize, index + 1, searchBy, searchText, filters)
       )
     );
 

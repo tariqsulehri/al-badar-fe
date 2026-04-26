@@ -11,6 +11,7 @@ import { getAllSubAreasForSelection } from "../../services/apis/config/subAreaSe
 import { getAllSuppliersForSelection } from "../../services/apis/partyService";
 import { lights, category, mediaTypes, dimension, status } from "../../constant/data";
 import { createSlide, getSlideById, updateSlide } from "../../services/apis/slideService";
+import { API_BASE_URL } from "../../config/constants";
 import CustomButton from "../../components/form-controls/buttons/customButton";
 import { showToastNotification } from "../../helpers/notificationsHepler";
 import "./create.slides.css";
@@ -64,6 +65,7 @@ const CreateSlide = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const isEditing = Boolean(id?.payload);
+  const uploadEndpoint = `${API_BASE_URL.replace(/\/+$/, "")}/slides/upload`;
 
   const fetchSelections = async () => {
     try {
@@ -174,7 +176,7 @@ const CreateSlide = () => {
       const fileFormData = new FormData();
       fileFormData.append("image", file);
 
-      const result = await axios.post("http://localhost:3500/api/slides/upload", fileFormData, {
+      const result = await axios.post(uploadEndpoint, fileFormData, {
         headers: { "Content-Type": "multipart/form-data", "x-auth-token": "token" },
       });
 
